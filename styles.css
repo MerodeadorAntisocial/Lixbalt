@@ -340,38 +340,51 @@ body {
     font-size: 0.95rem;
 }
 
-/* ==========================================================================
-   BIOGRAFIAS (CON COLOR REPRESENTANTE INDIVIDUAL --bio-color)
-   ========================================================================== */
 .bio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.75rem;
+    columns: 340px;
+    column-gap: 1.5rem;
 }
 
-/* ==========================================================================
-   BIOGRAFÍAS (TARJETAS 3D PARALLAX)
-   ========================================================================== */
 .bio-card {
     --bio-color: var(--imperial-red);
-    /* Variables para el seguimiento del ratón */
     --shine-x: 50%;
     --shine-y: 50%;
     
-    position: relative;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-top: 6px solid var(--bio-color);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: var(--card-shadow);
+    
+    break-inside: avoid; /* Evita que una tarjeta se parta entre dos columnas */
+    margin-bottom: 1.5rem;
+    width: 100%;
+    height: fit-content;
+}
+
+.bio-card-wide {
+    column-span: none; /* Mantiene el ancho de columna uniforme pero más alto según su texto */
+}
+
+@media (max-width: 760px) {
+    .bio-card-wide {
+        grid-column: 1 / -1;
+    }
+}
+
+.bio-body {
+    padding: 1.15rem 1.25rem; /* Padding más compacto */
     display: flex;
     flex-direction: column;
-    /* Transición suave para el retorno, transform se maneja por JS en el hover */
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                box-shadow 0.4s ease;
-    transform-style: preserve-3d; /* Clave para el efecto 3D */
-    will-change: transform;
+    gap: 0.65rem;
+    flex: 0 1 auto; /* Quita flex: 1 para que el cuerpo no se expanda de más */
+}
+
+.bio-weakness {
+    margin-top: 0.35rem; /* Quita margin-top: auto para pegar las debilidades al texto */
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-color);
 }
 
 /* El resplandor (Shine) que sigue al ratón */
