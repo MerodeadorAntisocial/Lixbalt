@@ -548,7 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
         'ach-hacker': false,
         'ach-audio': false,
         'ach-meme': false,
-        'ach-distant': false
+        'ach-distant': false,
+        'ach-judge': false,
+        'ach-inquisidor': false,
+        'ach-cinema': false
     };
 
     const savedAchievements = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
@@ -572,9 +575,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAchievementsUI();
 
         const achElement = document.getElementById(achId);
-        if (achElement) {
+        if (achElement && achievementToast) {
             const titleText = achElement.querySelector('h4').textContent;
             toastTitle.textContent = titleText;
+            achievementToast.classList.remove('hidden');
             achievementToast.classList.add('show');
 
             setTimeout(() => {
@@ -614,6 +618,17 @@ document.addEventListener('DOMContentLoaded', () => {
             viewedFactions.add(title);
             if (viewedFactions.size >= 3) {
                 unlockAchievement('ach-explorer');
+            }
+        });
+    });
+
+    let viewedCircles = new Set();
+    circleCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const num = card.querySelector('.circle-num')?.textContent.trim();
+            if (num) viewedCircles.add(num);
+            if (viewedCircles.size >= 5) {
+                unlockAchievement('ach-inquisidor');
             }
         });
     });
@@ -1634,9 +1649,11 @@ document.addEventListener('DOMContentLoaded', () => {
         circlesGrid.insertAdjacentHTML('afterend', quizHTML);
     }
 
-    const quizQuestions = [
+    const QUESTIONS_PER_RUN = 5;
+
+    const quizQuestionsPool = [
         {
-            q: "1. Estalla una crisis interna en el Imperio Papu. ¿Cuál es tu primera reacción?",
+            q: "Estalla una crisis interna en el Imperio Papu. ¿Cuál es tu primera reacción?",
             options: [
                 { text: "Mantenerme al margen en las sombras sin tomar partido.", circles: ["I", "III"] },
                 { text: "Aprovechar el caos para vender suministros y duplicar mi fortuna.", circles: ["IV", "VIII"] },
@@ -1645,7 +1662,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            q: "2. ¿Qué reliquia prohibida elegirías para aumentar tu escala en la Tierlist?",
+            q: "¿Qué reliquia prohibida elegirías para aumentar tu escala en la Tierlist?",
             options: [
                 { text: "La espada láser Binary Eraser y una cuenta bancaria infinita.", circles: ["IV", "VII"] },
                 { text: "El Yunque de Memes y los Momazos ancestrales de la SDLG.", circles: ["VIII", "II"] },
@@ -1654,7 +1671,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            q: "3. Un superior te desafía a un debate presidencial o combate 1v1:",
+            q: "Un superior te desafía a un debate presidencial o combate 1v1:",
             options: [
                 { text: "Lo destruyo con argumentos implacables y compro su casa.", circles: ["IV", "VI"] },
                 { text: "Entreno la técnica patea-abuelas y voy directo al choque físico.", circles: ["VII", "V"] },
@@ -1663,7 +1680,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            q: "4. ¿Cuál sería tu mayor debilidad registrada en los archivos imperiales?",
+            q: "¿Cuál sería tu mayor debilidad registrada en los archivos imperiales?",
             options: [
                 { text: "Dejarme llevar por las pasiones mundanas o quedarme sin plata por regalar cositas.", circles: ["II", "III"] },
                 { text: "Perder la paciencia al instante cuando alguien menciona un mal timing.", circles: ["V", "VII"] },
@@ -1672,12 +1689,102 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            q: "5. Si fueras asignado como torturador, ¿que estrategia usarias?",
+            q: "Si fueras asignado como guardián del abismo, ¿qué castigo aplicarías?",
             options: [
                 { text: "Un río hirviendo para quienes eligieron la fuerza bruta.", circles: ["VII", "V"] },
                 { text: "Un hielo absoluto reservado a los que quebraron la confianza suprema.", circles: ["IX", "IV"] },
                 { text: "Vientos huracanados, lluvia helada y sepulcros de fuego.", circles: ["II", "III", "VI"] },
-                { text: "Una penumbra silenciosa o en fosas llenas de acertijos y trampas.", circles: ["I", "VIII"] }
+                { text: "Una penumbra silenciosa o fosas llenas de acertijos y trampas.", circles: ["I", "VIII"] }
+            ]
+        },
+        {
+            q: "Te cruzas con Tiago patea-abuelas tras su entrenamiento de boxeo. ¿Qué haces?",
+            options: [
+                { text: "Aplico el arte marcial rodilla-breaker de Gabriel directo a su defensa baja.", circles: ["VII", "V"] },
+                { text: "Le pregunto cuándo fue la última vez que Aparicio para desestabilizarlo.", circles: ["VIII", "IX"] },
+                { text: "Invoco a Martiniano Base para imponer autoridad sin ensuciarme las manos.", circles: ["IV", "I"] },
+                { text: "Le invito un Blue Label con El Porros para evitar el conflicto.", circles: ["III", "II"] }
+            ]
+        },
+        {
+            q: "Descubres la fábrica de protogems de Malavida en Muy Muy Lejano:",
+            options: [
+                { text: "Le robo su foto de perfil de furro para quitarle su buena suerte y chantajearlo.", circles: ["VIII", "IX"] },
+                { text: "Compro toda la fábrica para monopolizar la economía del Imperio.", circles: ["IV", "III"] },
+                { text: "Investigo las funciones 'raras' de los protogems prohibidas por el Lore.", circles: ["II", "VI"] },
+                { text: "Destruyo sus computadoras vivas a puño limpio antes de que se multipliquen.", circles: ["VII", "V"] }
+            ]
+        },
+        {
+            q: "Durante la antigua guerra 'FURRY SUN', la máquina solar de 3 anillos se sobrecarga:",
+            options: [
+                { text: "Reclamo la corona de magma de KARLOS y tomo el antiguo trono infernal.", circles: ["VI", "IV"] },
+                { text: "Escondo el celular bomba con el Warzone y la PC con el DMC 5.", circles: ["VIII", "I"] },
+                { text: "Entreno a Santiago Hodar para desatar una ira digna del eclipse de Berserk.", circles: ["V", "VII"] },
+                { text: "Salgo y entro del grupo repetidas veces para confundir a todas las facciones.", circles: ["IX", "II"] }
+            ]
+        },
+        {
+            q: "Tomas Alternador de Femboys desbloquea su fase 'The Intruder' a las 3:00 AM:",
+            options: [
+                { text: "Activo Love Train de MrPapu para desviar toda la mala fortuna a otro.", circles: ["VIII", "IX"] },
+                { text: "Aguanto en silencio hasta que repita ataques y se canse solo.", circles: ["I", "IV"] },
+                { text: "Salgo al cruce en un intercambio brutal de golpes sin retroceder.", circles: ["VII", "V"] },
+                { text: "Lo distraigo con teorías del Mandela Catalogue y secretos de FNAF.", circles: ["II", "VI"] }
+            ]
+        },
+        {
+            q: "Encuentras a Lorentz The Wise King encapuchado recolectando reliquias:",
+            options: [
+                { text: "Me siento a absorber su sabiduría de Warhammer 40K, Bloons y Terraria.", circles: ["III", "I"] },
+                { text: "Descifro sus coordenadas encriptadas para robar su mayor reliquia.", circles: ["IV", "VIII"] },
+                { text: "Invoco a un ser solar para explotar su debilidad mortal a traición.", circles: ["IX", "VI"] },
+                { text: "Lo obligo a romper su silencio eterno mediante un duelo directo.", circles: ["V", "VII"] }
+            ]
+        },
+        {
+            q: "Joseph McLean activa sus nanomáquinas de Senador e infla la economía un 1000%:",
+            options: [
+                { text: "Me asocio con él y el Humo Negro en 'Los Empresarios' para forrarme en oro.", circles: ["IV", "VIII"] },
+                { text: "Esquivo sus ataques lentos mientras le confisco su estéreo Bose.", circles: ["VIII", "IX"] },
+                { text: "Destruyo todas las camas a mi paso en una campaña de caos total.", circles: ["VII", "V"] },
+                { text: "Derrocho todas las ganancias imperiales en excesos y festines.", circles: ["III", "II"] }
+            ]
+        },
+        {
+            q: "Te toca enfrentarte a Agustín Modo Epstein en la primera ronda del torneo:",
+            options: [
+                { text: "Lo derroto en un segundo usando su debilidad al vóley, básquet y fuerza.", circles: ["VII", "V"] },
+                { text: "Llamo a la profe de inglés y le pongo un examen sorpresa para humillarlo.", circles: ["VIII", "IX"] },
+                { text: "No muevo ni un dedo porque 'no dura nada' y cae por su propio peso.", circles: ["I", "III"] },
+                { text: "Vendo entradas VIP para el espectáculo y me quedo con la recaudación.", circles: ["IV", "II"] }
+            ]
+        },
+        {
+            q: "La cuenta regresiva hacia el 08 / 02 / 27 está por llegar a cero:",
+            options: [
+                { text: "Reúno los Momazos antiguos de la SDLG para controlar el poder oculto.", circles: ["VIII", "IV"] },
+                { text: "Me preparo para la guerra definitiva entrenando con el Trío Original.", circles: ["VII", "V"] },
+                { text: "Rompo los sellos antiguos para forzar el retorno del Thio-Padre.", circles: ["VI", "IX"] },
+                { text: "Sintonizo la Radio Lixbalt en la penumbra esperando el juicio final.", circles: ["I", "III"] }
+            ]
+        },
+        {
+            q: "MrPapu pierde el control y activa su poder final 'Como una vez fue':",
+            options: [
+                { text: "Uso el Divizinador para separar la fusión entre Martiniano y Tripalosky.", circles: ["VI", "VIII"] },
+                { text: "Me planto frente a él para contener su furia a puño limpio.", circles: ["VII", "V"] },
+                { text: "Aprovecho uno de sus malos timings para arrebatarle el trono imperial.", circles: ["IX", "IV"] },
+                { text: "Forjo un meme de emergencia en el Yunque de Memes para calmarlo.", circles: ["II", "I"] }
+            ]
+        },
+        {
+            q: "Obtienes acceso total a los archivos clasificados del Sagrado Lore 3.2:",
+            options: [
+                { text: "Subasto los secretos más oscuros del grupo al mejor postor.", circles: ["IV", "IX"] },
+                { text: "Reescribo las crónicas para declararme 'POR ENCIMA DE TODO'.", circles: ["VI", "VIII"] },
+                { text: "Filtro las carpetas ocultas de videomemes para sembrar el caos.", circles: ["II", "V"] },
+                { text: "Custodio el archivo en absoluto silencio desde las sombras del abismo.", circles: ["I", "III"] }
             ]
         }
     ];
@@ -1705,6 +1812,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const quizQuestionText = document.getElementById('quizQuestionText');
     const quizOptionsGrid = document.getElementById('quizOptionsGrid');
 
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    let activeQuizQuestions = [];
     let currentQuestionIdx = 0;
     let circleScores = {};
     let winningRoman = "VII";
@@ -1712,6 +1829,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function startHellQuiz() {
         currentQuestionIdx = 0;
         circleScores = { "I": 0, "II": 0, "III": 0, "IV": 0, "V": 0, "VI": 0, "VII": 0, "VIII": 0, "IX": 0 };
+
+        activeQuizQuestions = shuffleArray(quizQuestionsPool)
+            .slice(0, QUESTIONS_PER_RUN)
+            .map(item => ({
+                q: item.q,
+                options: shuffleArray(item.options)
+            }));
+
         quizStartView.classList.add('hidden');
         quizResultView.classList.add('hidden');
         quizQuestionView.classList.remove('hidden');
@@ -1719,11 +1844,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderQuizQuestion() {
-        const item = quizQuestions[currentQuestionIdx];
-        const progressPct = ((currentQuestionIdx + 1) / quizQuestions.length) * 100;
+        const item = activeQuizQuestions[currentQuestionIdx];
+        const totalQ = activeQuizQuestions.length;
+        const progressPct = ((currentQuestionIdx + 1) / totalQ) * 100;
+
         quizProgressFill.style.width = `${progressPct}%`;
-        quizStepCounter.textContent = `Pregunta ${currentQuestionIdx + 1} de ${quizQuestions.length}`;
-        quizQuestionText.textContent = item.q;
+        quizStepCounter.textContent = `Pregunta ${currentQuestionIdx + 1} de ${totalQ}`;
+        quizQuestionText.textContent = `${currentQuestionIdx + 1}. ${item.q}`;
         quizOptionsGrid.innerHTML = '';
 
         item.options.forEach(opt => {
@@ -1735,7 +1862,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     circleScores[c] = (circleScores[c] || 0) + (idx === 0 ? 2 : 1);
                 });
                 currentQuestionIdx++;
-                if (currentQuestionIdx < quizQuestions.length) {
+                if (currentQuestionIdx < totalQ) {
                     renderQuizQuestion();
                 } else {
                     showQuizResult();
@@ -1756,6 +1883,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('quizResultTitle').textContent = meta.title;
         document.getElementById('quizResultGuardian').textContent = `Guardián / Representante: ${meta.guardian}`;
         document.getElementById('quizResultDesc').textContent = meta.desc;
+
+        // Desbloquear logro "Sentenciado del Abismo"
+        if (typeof window.unlockAchievement === 'function') {
+            window.unlockAchievement('ach-judge');
+        }
+    }
+
+    if (startQuizBtn) startQuizBtn.addEventListener('click', startHellQuiz);
+    if (retryQuizBtn) retryQuizBtn.addEventListener('click', startHellQuiz);
+
+    if (highlightCircleBtn) {
+        highlightCircleBtn.addEventListener('click', () => {
+            const allCircleCards = document.querySelectorAll('#circlesGrid .circle-card');
+            allCircleCards.forEach(c => c.classList.remove('circle-highlighted'));
+
+            allCircleCards.forEach(card => {
+                const numSpan = card.querySelector('.circle-num');
+                if (numSpan && numSpan.textContent.trim() === winningRoman) {
+                    card.classList.add('circle-highlighted');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => card.click(), 450);
+                }
+            });
+        });
     }
 
     if (startQuizBtn) startQuizBtn.addEventListener('click', startHellQuiz);
@@ -1852,6 +2003,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = videoItems[idx];
         if (!item || !cinemaModalBackdrop) return;
 
+        // Desbloquear trofeo "Cinéfilo Imperial"
+        if (typeof window.unlockAchievement === 'function') {
+            window.unlockAchievement('ach-cinema');
+        }
+
         // Pausar música de Radio Lixbalt si está sonando
         const playPauseBtn = document.getElementById('playPauseBtn');
         if (bgMusic && !bgMusic.paused && playPauseBtn) {
@@ -1866,6 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <iframe 
                     src="https://www.youtube.com/embed/${item.videoId}?autoplay=1&rel=0" 
                     title="${item.title}"
+                    referrerpolicy="strict-origin-when-cross-origin"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                     allowfullscreen>
                 </iframe>
@@ -1910,4 +2067,54 @@ document.addEventListener('DOMContentLoaded', () => {
             closeCinemaModal();
         }
     });
+
+    // =========================================================================
+    // CAMBIO DE LOGO AL TOCARLO 10 VECES
+    // =========================================================================
+    const brandLogo = document.querySelector('.brand-logo');
+    let logoClickCount = 0;
+    let isSecretLogoActive = false;
+
+    const originalLogoSrc = 'img/logo.webp';
+    const secretLogoSrc = 'img/Lautaro Gatto.png'; // Cambia esta ruta por tu nueva imagen
+
+    if (brandLogo) {
+        brandLogo.addEventListener('click', (e) => {
+            // Evita que el enlace <a href="#inicio"> salte al inicio en cada toque
+            e.preventDefault();
+            e.stopPropagation();
+
+            logoClickCount++;
+
+            // Pequeño pulso visual en cada toque
+            brandLogo.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                brandLogo.style.transform = '';
+            }, 100);
+
+            if (logoClickCount >= 10) {
+                logoClickCount = 0;
+                isSecretLogoActive = !isSecretLogoActive;
+
+                if (isSecretLogoActive) {
+                    brandLogo.onerror = function () {
+                        this.src = 'https://placehold.co/60x60/16a34a/ffffff?text=SECRET';
+                    };
+                    brandLogo.src = secretLogoSrc;
+                    brandLogo.alt = 'Logo Secreto del Imperio Papu';
+                } else {
+                    brandLogo.onerror = function () {
+                        this.src = 'https://placehold.co/60x60/d60000/ffffff?text=IP';
+                    };
+                    brandLogo.src = originalLogoSrc;
+                    brandLogo.alt = 'Logo Imperio Papu';
+                }
+
+                // Animación de giro al desbloquear el cambio
+                brandLogo.classList.remove('logo-spin-effect');
+                void brandLogo.offsetWidth; // Reinicia la animación CSS
+                brandLogo.classList.add('logo-spin-effect');
+            }
+        });
+    }
 });
