@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biografías y Características | Imperio Papu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- HEADER & NAV MULTIPÁGINA -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="index.html" class="brand">
+                <img src="img/logo.webp" alt="Logo Imperio Papu" class="brand-logo" 
+                    onerror="this.src='https://placehold.co/60x60/d60000/ffffff?text=IP'">
+                <span class="brand-title">IMPERIO <span>PAPU</span></span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+                ☰
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link" data-page="index.html">Inicio & Tierlist</a></li>
+                    <li><a href="integrantes.html" class="nav-link" data-page="integrantes.html">Biografías</a></li>
+                    <li><a href="lore.html" class="nav-link" data-page="lore.html">Facciones & Lore</a></li>
+                    <li><a href="circulos.html" class="nav-link" data-page="circulos.html">Círculos & Juicio</a></li>
+                    <li><a href="multimedia.html" class="nav-link" data-page="multimedia.html">Memes & Videos</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                <span class="theme-icon" id="themeIcon">☀️</span>
+                <span class="theme-text" id="themeText">Modo Claro</span>
+            </button>
+        </div>
+    </header>
+    
+
+    <main>
+        <!-- BIOGRAFIAS -->
+        <section id="biografias" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Biografías Imperiales</h2>
+                </div>
+
+                <!-- CONTROLES DE BÚSQUEDA Y FILTRO POR RANGO -->
+                <div class="bio-controls" id="bioControlsWrapper">
+                    <div class="bio-search-wrapper">
+                        <span class="bio-search-icon">🔍</span>
+                        <input type="search" id="bioSearchInput" class="bio-search-input" 
+                            placeholder="Buscar por nombre, habilidad o debilidad (ej. MrPapu, nanomáquinas, furro)..." 
+                            aria-label="Buscar biografías">
+                        <span class="bio-count-badge" id="bioCountBadge">11 / 11</span>
+                    </div>
+                    <div class="bio-tier-filters" id="bioTierFilters" role="group" aria-label="Filtrar por rango">
+                        <button class="bio-filter-btn active" data-tier="all">Todos</button>
+                        <button class="bio-filter-btn" data-tier="POR ENCIMA DE TODO">Por Encima de Todo</button>
+                        <button class="bio-filter-btn" data-tier="The Best">The Best</button>
+                        <button class="bio-filter-btn" data-tier="Superior">Superior</button>
+                        <button class="bio-filter-btn" data-tier="Normal">Normal</button>
+                        <button class="bio-filter-btn" data-tier="Pete">Pete</button>
+                    </div>
+                </div>
+                <div id="bioNoResults" class="bio-no-results hidden">
+                    <p>⚠️ No se encontraron integrantes que coincidan con tu búsqueda en los archivos imperiales.</p>
+                </div>
+
+                <div class="bio-grid">
+                    <!-- 1. Tiago patea-abuelas -->
+                    <article class="bio-card" style="--bio-color: #e63946;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/who.jpg" alt="Tiago patea-abuelas" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/e63946?text=img/who.jpg'">
+                            <span class="bio-tier-tag">Superior</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Tiago patea-abuelas</h3>
+                            <p>Él era un sujeto muy débil hasta que fue derrotado por el gran poderoso Martiniano Base. Por ello, él comenzó a entrenar boxeo y le pidió ayuda en el entrenamiento del arte marcial patea-abuelas a MrPapu, terminando por perfeccionar esta técnica.</p>
+                            <p>Es uno de los pocos integrantes con poca información sobre él.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>No tiene defensa baja, haciéndolo vulnerable al arte marcial rodilla-breaker de Gabriel.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y al Tiago cuándo fue la última vez que Aparicio.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 2. Santiago Hodar -->
+                    <article class="bio-card" style="--bio-color: #8b5cf6;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/hodar.jpg" alt="Santiago Hodar" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/8b5cf6?text=img/hodar.jpg'">
+                            <span class="bio-tier-tag">Superior</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Santiago Hodar <small>(El Inservible S)</small></h3>
+                            <p>Es un ser que vio lo peor, igualado a estar en el eclipse de Berserk. Él era del turno de mañana, pero se cambió después de ver tal suceso. Santiago es un inservible que puede hacerle frente al ser poderoso Mr. Papu, además de ser invencible.</p>
+                            <p>Aunque no lo crean, es entrenado por el gato Grandia, por eso tiene tal poder. Además, puede volverse fuerte después de una pelea. Lo importante es no hacerlo enojar, pues sufrirás la ira y el enojo que puede eliminarte brutalmente.</p>
+                        </div>
+                    </article>
+
+                    <!-- 3. Malavida El Constructor Cambiado -->
+                    <article class="bio-card" style="--bio-color: #10b981;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/malavida.jpg" alt="Malavida El Constructor Cambiado" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/10b981?text=img/malavida.jpg'">
+                            <span class="bio-tier-tag">Superior</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Malavida El Constructor Cambiado</h3>
+                            <p>Vivió toda su vida en miseria hasta que en un momento consiguió una foto de perfil de un furro que le da el poder de la buena suerte, consiguiendo habilidades de buena suerte y un aumento económico por su fábrica de protogems.</p>
+                            <p><strong>Dato Curioso:</strong> Es un gran jugador y usuario de internet, puede crear de vez en cuando computadoras vivas y volverse rico usando la XBOX. El último representante de la "Triple T" y un intelectual del que hay que tener cuidado.</p>
+                            <div class="acronym-box">
+                                <strong>Él es un:</strong><br>
+                                <span><b>E</b>locuente</span> · <span><b>N</b>arcisista</span> · <span><b>F</b>atal</span> · <span><b>E</b>special en</span> · <span><b>R</b>ivalizar</span> · <span><b>M</b>onstruos</span> · <span><b>O</b>scuros</span>
+                            </div>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Su foto de perfil es también su debilidad al poder sacarse rápidamente y no querer que se haga pública.</li>
+                                    <li>Vive en Muy Muy Lejano.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y al Malavida por qué los protogems tienen funciones "raras".</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 4. Grandia, Sun's King -->
+                    <article class="bio-card bio-card-wide" style="--bio-color: #f59e0b;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/gatto.jpg" alt="Grandia, Sun's King" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/f59e0b?text=img/gatto.jpg'">
+                            <span class="bio-tier-tag">Normal</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Grandia, Sun’s King</h3>
+                            <p>Todo empezó con el nacimiento del furro "GATTO". Hace miles de años, hubo una guerra llamada "FURRY SUN" sobre la ruptura de la alianza entre la REINA SOLAR y el REY FURRO, debido al recién nacido LAUTARO EXEQUIEL GATTO GRANDIA, fusionado con diferentes razas en una máquina. Resistió las pruebas y la guerra duró 12 años. Siendo un bebé cósmico, el Thio-Padre lo infectó con el simbionte furro llamado KHALKS, condenándolo por miles de años.</p>
+                            <p>Tras la desaparición del Thio-Padre, el reino furro se dividió según KARLOS. Para salvarlo construyeron una máquina solar de 3 anillos gigantes (1000, 500 y 100 KM). Una tormenta solar concentró la energía en LAUTARO, separando su cuerpo del demonio furro (que cayó en la Tierra y poseyó a THOMAS). LAUTARO brilló con ojos amarillos intensos y rocas volcánicas. El 20 de abril de 2024, KARLOS sacó la corona de magma y dijo: <em>"LAUTARO EXEQUIEL GRANDIA, PRÍNCIPE DEL SOL, TE DECLARO REY"</em>, sentándose en el antiguo trono infernal.</p>
+                            <p><strong>Objetos ocultos alrededor del mundo:</strong> El celular bomba con el Warzone y La computadora con el DMC 5. Cuando el imperio se divida, se dice que llorará sangre.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Su poca resistencia hacia golpes directos.</li>
+                                    <li>Nunca perderá sobre las garras del infierno.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y cuántas veces ha entrado y salido del grupo.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 5. Tomas Alternador de Femboys -->
+                    <article class="bio-card" style="--bio-color: #ec4899;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/iglesias.jpg" alt="Tomas Alternador de Femboys" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/ec4899?text=img/iglesias.jpg'">
+                            <span class="bio-tier-tag">The Best</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Tomas Alternador de Femboys</h3>
+                            <p>Es un ser de naturaleza extremadamente poderosa al ser creado con el 2% de Dios, siendo un ser que nunca tuvo que entrenar. Ha desbloqueado una nueva fase, <strong>The Intruder</strong>: su poder incrementa de forma abismal y no se sabe hasta qué punto. Se cree que es un esquizofrénico medicado ya que dice que ve fantasmas. Trata de ocultar sus obvios problemas mentales.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>No puede usar repetidas veces un ataque ya que se cansa rápido.</li>
+                                    <li>Es débil ante counters y a su Novio Mordo, el cual lo puede matar en la cama.</li>
+                                    <li>De vez en cuando se queda sin plata por comprarle cositas a los miembros del imperio.</li>
+                                    <li>Collar / De vez en cuando se le ocurre hacer sufrir a MrPapu.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y cuánto porno tiene para sus videomemes.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 6. Agustín Modo Epstein -->
+                    <article class="bio-card" style="--bio-color: #64748b;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/agustin.jpg" alt="Agustín Modo Epstein" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/64748b?text=img/agustin.jpg'">
+                            <span class="bio-tier-tag">Pete</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Agustín Modo Epstein</h3>
+                            <p>Pendejo no dura nada.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Escuela, velocidad, fuerza, peso, estudiar, casa, vóley, básquet...</li>
+                                    <li><strong>¡¡¡TODO!!!</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 7. MrPapu el Merodeador Antisocial -->
+                    <article class="bio-card" style="--bio-color: #22c55e;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/mrpapu.jpg" alt="MrPapu el Merodeador Antisocial" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/22c55e?text=img/mrpapu.jpg'">
+                            <span class="bio-tier-tag">The Best</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>MrPapu el Merodeador Antisocial</h3>
+                            <p>Es un ser tan antiguo como poderoso, con el poder para hacer frente a Joseph McLean e igualar a Tomás Alternador de Femboys. Ha hecho tratos con miembros del imperio.</p>
+                            <p><strong>Habilidades destacadas:</strong> <em>Love Train</em> (pasa la mala fortuna a otra persona), <em>El yunque de memes</em> (forjador de momos de calidad), <em>Momazos</em> (última estrategia con un meme especializado para cada integrante en caso de emergencia), el poder de boxear con sus computadoras y su poder final: <strong>Como una vez fue</strong>.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Aún sigue siendo una persona (no es un ayudante de Dios o un ser cósmico) y la profe de inglés.</li>
+                                    <li>Sumamente desconfiado...</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y cuántos malos timings ha tenido MrPapu.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 8. José McLean -->
+                    <article class="bio-card" style="--bio-color: #3b82f6;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/joseph.png" alt="José McLean" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/3b82f6?text=img/joseph.png'">
+                            <span class="bio-tier-tag">The Best</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>José McLean <small>(Joseph McLean)</small></h3>
+                            <p>Empresario exitoso a sus pocos 10 años con una visión sobre una autocracia gobernada solo por él. A sus 14 años se convierte en senador siendo conocido como el Senador Armstrong; su habilidad de nanomáquinas lo hace por un buen tiempo inmune a cualquier daño físico. Renunció y destruyó todas las camas a su paso, y tras su vuelta incrementó la economía del imperio un 1000%. Experto alumno del NAIN supremo.</p>
+                            <p><strong>Armas:</strong> <em>Divizinador</em> (capaz de dividir fusiones simbióticas entre Martiniano y Tripalosky si MrPapu se descontrola) y <em>Binary Eraser</em> (espada láser obsequiada por el rey Alan Becker de los Bekianos que libera números binarios al cortar, vista en "TCO y TSC vs TDL").</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>La economía de Argentina, los progres y los derechos humanos.</li>
+                                    <li>No tener la estéreo Bose.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y cuántos esclavos tiene en el sótano.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 9. Lorentz The Wise King -->
+                    <article class="bio-card" style="--bio-color: #06b6d4;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/lorentz.png" alt="Lorentz The Wise King" 
+                                 onerror="this.src='https://placehold.co/400x260/1e1e24/06b6d4?text=img/lorentz.png'">
+                            <span class="bio-tier-tag">Superior</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Lorentz The Wise King</h3>
+                            <p>Conocido como Lorenzo, viene de un universo alterno después de la liberación del poder de MrPapu. Perdió un gran porcentaje de su poder y busca objetos perdidos esparcidos por el mundo. Su mayor reliquia está escondida en <code>$#%$#"%- %/#)=%#"% y /#$%#"()%)</code>.</p>
+                            <p>Es una biblioteca humana sobre Warhammer 40K, Bloons y Terraria, y el ser con mayor sabiduría y silencio del imperio.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Está muy debilitado, teniendo de debilidad mortal a los furros y seres solares.</li>
+                                    <li>No pregunten la edad de una mujer, el salario de un hombre y al Lolo cuántas horas tiene en Terraria, Bloons y Ultrakill.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 10. El Porros -->
+                    <article class="bio-card" style="--bio-color: #84cc16;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/porros.jpg" alt="El Porros" 
+                                 onerror="this.src='https://placehold.co/400x260/1e1e24/84cc16?text=img/porros.jpg'">
+                            <span class="bio-tier-tag">Normal</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>El Porros <small>(Nicolás)</small></h3>
+                            <p>Cuyo verdadero nombre es Nicolás. Personaje tan poco recurrente que no se tiene información de él. No sabes cuándo ni cómo, pero hablará y no te darás cuenta.</p>
+                            <div class="bio-weakness">
+                                <h4>Debilidades:</h4>
+                                <ul>
+                                    <li>Los porros.</li>
+                                    <li>El Blue Label.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 11. ThioPadre -->
+                    <article class="bio-card" style="--bio-color: #eab308;">
+                        <div class="bio-img-wrapper">
+                            <img src="img/thiopadre.png" alt="ThioPadre" 
+                                onerror="this.src='https://placehold.co/400x260/1e1e24/eab308?text=img/thiopadre.png'">
+                            <span class="bio-tier-tag">POR ENCIMA DE TODO</span>
+                        </div>
+                        <div class="bio-body">
+                            <h3>Thio-Padre</h3>
+                            <p>Entidad suprema situada por encima de toda la jerarquía del Imperio Papu. Sus registros directos permanecen envueltos en el misterio tras su desaparición en las crónicas antiguas.</p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        
+
+        <!-- CARACTERÍSTICAS -->
+        <section id="caracteristicas" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Características Especiales</h2>
+                    <p>Rasgos distintivos y secretos de los miembros destacados.</p>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <h3>MrPapu <span class="trait-badge">Eficaz Líder</span></h3>
+                        <p>Es la combinación de Martiniano E. Diele y Tripalosky. Al ser una combinación de 2 personas es un ser muy poderoso con secretos ocultos. El ser con más problemas del Imperio.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Tomas Alternador de Femboys <span class="trait-badge">Motivándote</span></h3>
+                        <p>Usa su ingenio en busca de una buena pelea teniendo de eterno rival a MrPapu. El fan de FNAF más sano.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Lautaro Modo Helper <span class="trait-badge">Siempre vuelve</span></h3>
+                        <p>Es un ser en busca de papear a quien se meta con él y su Thio-Padre, y en búsqueda de superar al Humo Negro y a MrPapu en el Brawlhalla. De vez en cuando lanza verdades.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Joseph McLean <span class="trait-badge">Gran Conocimiento</span></h3>
+                        <p>El más fuerte de todo el Imperio Papu, pero con un problema: es fácil de esquivar, aunque eso no quita su habilidad para destruir todos tus argumentos y comprar tu casa. Vende coca.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Malavida El Constructor Cambiado <span class="trait-badge">Confianza y Amistad, cámbiate de curso</span></h3>
+                        <p>Él solo no cuenta como un ser de gran poder, pero con su foto de perfil logra convertirse en alguien muy poderoso en la escala de poder. Por alguna razón se cambia la foto de perfil casi a diario. ¡¡Fórmula God!! o algo así.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Lorentz The Wise King <span class="trait-badge">Conocedor del Internet, te deja en 2D</span></h3>
+                        <p>Se lo ha visto muy pocas veces y en una de esas con una capa y capucha cubriendo todo su cuerpo; se dice que ahí oculta los objetos que ha encontrado hasta ahora. Poco a poco se inserta fragmentos de objetos que encuentra. Ojo al piojo.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h3>Tomas El Humo Negro <span class="trait-badge">Astuto y te roba hasta la merienda</span></h3>
+                        <p>Personaje mítico con un poder oculto que obtendrá al conseguir los Momazos creados en la antigua SDLG, cuyo fundador ha desaparecido. Se dice que MrPapu tiene algunos Momazos antiguos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+                <p>&copy; 2026 El Sagrado Lore del Imperio Papu 3.2 — Todos los derechos reservados al Imperio.</p>
+            </div>
+        </div>
+    </footer>
+
+<!-- =================================================================
+        CUADRADO EXPLICATIVO DE HISTORIA DE FACCIONES
+    =================================================================== -->
+    <div id="faccionModalBackdrop" class="faccion-square-backdrop hidden" aria-hidden="true">
+        <div class="faccion-square-box" role="dialog" aria-modal="true" aria-labelledby="faccionSquareTitle">
+            <div class="faccion-square-header">
+                <span class="faccion-square-badge">ARCHIVO DE FACCIÓN</span>
+                <button id="closeFaccionSquareBtn" class="faccion-square-close" aria-label="Cerrar cuadrado explicativo">✕</button>
+            </div>
+            <h3 id="faccionSquareTitle" class="faccion-square-title">Nombre de la Facción</h3>
+            <p id="faccionSquareMembers" class="faccion-square-members">Integrantes</p>
+            <div class="faccion-square-body">
+                <h4>Historia de la Facción</h4>
+                <p id="faccionSquareHistory">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================
+         CUADRADO EXPLICATIVO DE CÍRCULOS IMPERIALES
+         ================================================================= -->
+    <div id="circleModalBackdrop" class="faccion-square-backdrop hidden" aria-hidden="true">
+        <div class="faccion-square-box" role="dialog" aria-modal="true" aria-labelledby="circleSquareTitle">
+            <div class="faccion-square-header">
+                <span class="faccion-square-badge" style="background: var(--imperial-red);">CÍRCULO IMPERIAL</span>
+                <button id="closeCircleSquareBtn" class="faccion-square-close" aria-label="Cerrar cuadrado explicativo">✕</button>
+            </div>
+            <h3 id="circleSquareTitle" class="faccion-square-title">Círculo del Infierno</h3>
+            <p id="circleSquareMember" class="faccion-square-members">Representante</p>
+            <div class="faccion-square-body">
+                <h4>Explicación del Círculo</h4>
+                <p id="circleSquareDescription">
+                    Descripción detallada del círculo imperial y su influencia en el lore.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================
+         REPRODUCTOR MULTICANCIONES GLASSMORPHISM
+         ================================================================= -->
+    <div class="music-player-glass" id="musicPlayer">
+        <audio id="bgMusic" preload="auto"></audio>
+
+        <div class="music-header">
+            <div class="music-status">
+                <span class="eq-bars" id="eqBars">
+                    <span></span><span></span><span></span>
+                </span>
+                <span class="music-title">Radio Lixbalt</span>
+            </div>
+            <button class="music-minimize-btn" id="minimizeMusicBtn" title="Minimizar/Expandir reproductor">
+                −
+            </button>
+        </div>
+
+        <div class="music-controls-body" id="musicControlsBody">
+            <div class="current-track-name" id="currentTrackName">Cargando pista...</div>
+            <select id="trackSelector" class="track-selector" aria-label="Seleccionar canción"></select>
+
+            <div class="playback-row">
+                <button class="music-btn-nav" id="prevTrackBtn" title="Canción anterior" aria-label="Canción anterior">
+                    ⏮
+                </button>
+                <button class="music-btn-play" id="playPauseBtn" aria-label="Reproducir o pausar música">
+                    <span id="playPauseIcon">▶</span>
+                    <span id="playPauseText">Continuar</span>
+                </button>
+                <button class="music-btn-nav" id="nextTrackBtn" title="Siguiente canción" aria-label="Siguiente canción">
+                    ⏭
+                </button>
+            </div>
+
+            <canvas id="audioVisualizerCanvas" class="audio-visualizer-canvas" width="240" height="46"></canvas>
+
+            <div class="volume-controls">
+                <button class="vol-step-btn" id="volDownBtn" title="Bajar volumen (-10%)" aria-label="Bajar volumen">
+                    🔉 −
+                </button>
+                <input type="range" id="volumeSlider" class="volume-slider" 
+                    min="0" max="1" step="0.05" value="0.5" aria-label="Control de volumen">
+                <button class="vol-step-btn" id="volUpBtn" title="Subir volumen (+10%)" aria-label="Subir volumen">
+                    🔊 +
+                </button>
+            </div>
+
+            <div class="volume-indicator">
+                Volumen: <strong id="volumeValue">50%</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- EASTER EGG: ICEBERG -->
+    <div id="icebergEasterEgg" class="iceberg-overlay hidden">
+        <canvas id="staticCanvas" class="static-canvas"></canvas>
+
+        <div id="countdownWrapper" class="countdown-wrapper">
+            <p class="countdown-tag">SEÑAL INTERCEPTADA // ARCHIVO SECRETO</p>
+            <h2 class="countdown-target-date">08 / 02 / 27</h2>
+
+            <div class="countdown-boxes">
+                <div class="cd-unit">
+                    <span id="cdDays" class="cd-number">00</span>
+                    <span class="cd-label">DÍAS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdHours" class="cd-number">00</span>
+                    <span class="cd-label">HORAS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdMinutes" class="cd-number">00</span>
+                    <span class="cd-label">MINUTOS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdSeconds" class="cd-number">00</span>
+                    <span class="cd-label">SEGUNDOS</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="closeIcebergBtn" class="close-iceberg-btn">CERRAR SEÑAL [ESC / X]</button>
+    </div>
+
+    <!-- EASTER EGG: JUEGO DISTANT (P5.JS) -->
+    <div id="distantEasterEgg" class="distant-overlay hidden" aria-hidden="true">
+        <div class="distant-modal-header">
+            <div class="distant-title-group">
+                <span class="distant-badge">🎮 ARCHIVO SECRETO // DISTANT</span>
+                <span class="distant-controls-hint">WASD: Moverse | Click: Disparar | E: Parábola | R: Reiniciar</span>
+            </div>
+            <button id="closeDistantBtn" class="close-distant-btn" aria-label="Cerrar juego">CERRAR [ESC / X]</button>
+        </div>
+        <div id="distantCanvasContainer" class="distant-canvas-container"></div>
+    </div>
+
+    <!-- PANEL DE LOGROS DESBLOQUEABLES FLOTANTE -->
+    <div class="achievements-widget" id="achievementsWidget">
+        <button class="achievements-toggle-btn" id="achievementsToggleBtn" title="Ver Logros Imperiales">
+            🏆 <span id="achievementsCount">0/8</span>
+        </button>
+        <div class="achievements-panel hidden" id="achievementsPanel">
+            <div class="ach_panel_header">
+                <h3>Condecoraciones Imperiales</h3>
+                <button id="closeAchievementsBtn" class="ach_close_btn">✕</button>
+            </div>
+            <div class="ach_list">
+                <div class="ach_item" id="ach-explorer">
+                    <div class="ach_icon">🗺️</div>
+                    <div class="ach_info">
+                        <h4>Explorador del Abismo</h4>
+                        <p>Visita todas las secciones de las Facciones del Imperio.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-hacker">
+                    <div class="ach_icon">💻</div>
+                    <div class="ach_info">
+                        <h4>Hacker del Lore</h4>
+                        <p>Desbloquea el Easter Egg escribiendo una palabra secreta.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-audio">
+                    <div class="ach_icon">🎵</div>
+                    <div class="ach_info">
+                        <h4>Audiófilo Imperial</h4>
+                        <p>Reproduce al menos una canción en la Radio Lixbalt.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-meme">
+                    <div class="ach_icon">🃏</div>
+                    <div class="ach_info">
+                        <h4>Crítico de Momazos</h4>
+                        <p>Abre el visor de memes y haz clic en cualquier meme.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-distant">
+                    <div class="ach_icon">🐱</div>
+                    <div class="ach_info">
+                        <h4>Héroe de Distant</h4>
+                        <p>Derrota al jefe final en el juego secreto Distant.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <!-- 3 NUEVOS TROFEOS -->
+                <div class="ach_item" id="ach-judge">
+                    <div class="ach_icon">⚖️</div>
+                    <div class="ach_info">
+                        <h4>Sentenciado del Abismo</h4>
+                        <p>Completa el Test del Infierno Imperial y descubre tu Círculo.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-inquisidor">
+                    <div class="ach_icon">📜</div>
+                    <div class="ach_info">
+                        <h4>Inquisidor de los 9 Círculos</h4>
+                        <p>Inspecciona los archivos de al menos 5 Círculos Imperiales distintos.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-cinema">
+                    <div class="ach_icon">🎬</div>
+                    <div class="ach_info">
+                        <h4>Cinéfilo Imperial</h4>
+                        <p>Reproduce cualquier archivo histórico en el Modo Cine Imperial.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN DE LOGRO DESBLOQUEADO -->
+    <div id="achievementToast" class="achievement-toast hidden">
+        <div class="toast_icon">🏆</div>
+        <div class="toast_text">
+            <span>¡LOGRO DESBLOQUEADO!</span>
+            <h4 id="toastTitle">Nombre del logro</h4>
+        </div>
+    </div>
+
+    <!-- MODO CINE INTEGRADO (ARCHIVO AUDIOVISUAL) -->
+    <div id="cinemaModalBackdrop" class="cinema-modal-backdrop hidden" aria-hidden="true">
+        <div class="cinema-modal-box" role="dialog" aria-modal="true" aria-labelledby="cinemaVideoTitle">
+            <div class="cinema-modal-header">
+                <div class="cinema-title-wrap">
+                    <span class="faccion-square-badge">🎬 MODO CINE IMPERIAL</span>
+                    <h3 id="cinemaVideoTitle">Reproduciendo archivo...</h3>
+                </div>
+                <div class="cinema-header-actions">
+                    <a id="cinemaExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="cinema-ext-btn">
+                        Abrir en YouTube ↗
+                    </a>
+                    <button id="closeCinemaBtn" class="faccion-square-close" aria-label="Cerrar modo cine">✕</button>
+                </div>
+            </div>
+
+            <div class="cinema-video-wrapper" id="cinemaVideoWrapper"></div>
+
+            <div class="cinema-playlist-bar" id="cinemaPlaylistBar"></div>
+        </div>
+    </div>
+
+    <!-- Librerías de p5.js y script principal (solo una vez al final del body) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/addons/p5.sound.min.js"></script>
+    <script src="script.js"></script>
+    <script src="distant.js"></script>
+</body>
+</html>
+

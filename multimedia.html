@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Yunque de Memes y Videos | Imperio Papu</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- HEADER & NAV MULTIPÁGINA -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="index.html" class="brand">
+                <img src="img/logo.webp" alt="Logo Imperio Papu" class="brand-logo" 
+                    onerror="this.src='https://placehold.co/60x60/d60000/ffffff?text=IP'">
+                <span class="brand-title">IMPERIO <span>PAPU</span></span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+                ☰
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link" data-page="index.html">Inicio & Tierlist</a></li>
+                    <li><a href="integrantes.html" class="nav-link" data-page="integrantes.html">Biografías</a></li>
+                    <li><a href="lore.html" class="nav-link" data-page="lore.html">Facciones & Lore</a></li>
+                    <li><a href="circulos.html" class="nav-link" data-page="circulos.html">Círculos & Juicio</a></li>
+                    <li><a href="multimedia.html" class="nav-link" data-page="multimedia.html">Memes & Videos</a></li>
+                </ul>
+            </nav>
+
+            <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                <span class="theme-icon" id="themeIcon">☀️</span>
+                <span class="theme-text" id="themeText">Modo Claro</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- VISOR DE MEMES (EL YUNQUE DE MEMES) -->
+        <section id="memes" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>El Yunque de Memes</h2>
+                    <p>Archivo oficial de momazos del Imperio Papu. Haz clic en cualquier imagen para abrir el visor y desbloquear su condecoración.</p>
+                </div>
+
+                <!-- Filtros por categoría -->
+                <div class="meme-filters" role="group" aria-label="Filtrar memes por categoría">
+                    <button class="filter-btn active" data-filter="all">Todos (20)</button>
+                    <button class="filter-btn" data-filter="Yunque">El Yunque</button>
+                    <button class="filter-btn" data-filter="Triple T">Triple T</button>
+                    <button class="filter-btn" data-filter="Empresarios">Los Empresarios</button>
+                    <button class="filter-btn" data-filter="Lore">Sagrado Lore</button>
+                </div>
+
+                <!-- Cuadrícula de 20 Placeholders para editar manualmente -->
+                <div class="meme-grid" id="memeGrid">
+                    <!-- Meme 1 -->
+                    <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\622098d9371f8 (1).png" alt="Momazo Imperial #01" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+01+(img/memes/meme1.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #01</h4>
+                            <span class="meme-tag">Yunque</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 2 -->
+                    <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\Captura de pantalla 2025-03-01 214959.png" alt="Momazo Imperial #02" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+02+(img/memes/meme2.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #02</h4>
+                            <span class="meme-tag">Triple T</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 3 -->
+                    <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\El.png" alt="Momazo Imperial #03" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+03+(img/memes/meme3.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #03</h4>
+                            <span class="meme-tag">Empresarios</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 4 -->
+                    <article class="meme-card" data-category="Lore" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\Eltingvill.png" alt="Momazo Imperial #04" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+04+(img/memes/meme4.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #04</h4>
+                            <span class="meme-tag">Lore</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 5 -->
+                    <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\image (2).png" alt="Momazo Imperial #05" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+05+(img/memes/meme5.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #05</h4>
+                            <span class="meme-tag">Yunque</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 6 -->
+                    <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\LoloCard.png" alt="Momazo Imperial #06" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+06+(img/memes/meme6.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #06</h4>
+                            <span class="meme-tag">Triple T</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 7 -->
+                    <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\m2-res_638p (12)z.png" alt="Momazo Imperial #07" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+07+(img/memes/meme7.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #07</h4>
+                            <span class="meme-tag">Empresarios</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 8 -->
+                    <article class="meme-card" data-category="Lore" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\malagoli.png" alt="Momazo Imperial #08" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+08+(img/memes/meme8.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #08</h4>
+                            <span class="meme-tag">Lore</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 9 -->
+                    <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\Pocodriguez.png" alt="Momazo Imperial #09" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+09+(img/memes/meme9.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #09</h4>
+                            <span class="meme-tag">Yunque</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 10 -->
+                    <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\Terminado.png" alt="Momazo Imperial #10" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+10+(img/memes/meme10.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #10</h4>
+                            <span class="meme-tag">Triple T</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 11 -->
+                    <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\Wadruiguez.png" alt="Momazo Imperial #11" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+11+(img/memes/meme11.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #11</h4>
+                            <span class="meme-tag">Empresarios</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 12 -->
+                    <article class="meme-card" data-category="Lore" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\watto.png" alt="Momazo Imperial #12" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+12+(img/memes/meme12.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #12</h4>
+                            <span class="meme-tag">Lore</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 13 -->
+                    <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\WhatsApp Image 2026-06-08 at 15.11.03.jpeg" alt="Momazo Imperial #13" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+13+(img/memes/meme13.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #13</h4>
+                            <span class="meme-tag">Yunque</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 14 -->
+                    <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="memes\meme14.jpg" alt="Momazo Imperial #14" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+14+(img/memes/meme14.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #14</h4>
+                            <span class="meme-tag">Triple T</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 15 -->
+                    <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme15.jpg" alt="Momazo Imperial #15" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+15+(img/memes/meme15.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #15</h4>
+                            <span class="meme-tag">Empresarios</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 16 -->
+                    <article class="meme-card" data-category="Lore" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme16.jpg" alt="Momazo Imperial #16" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+16+(img/memes/meme16.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #16</h4>
+                            <span class="meme-tag">Lore</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 17 -->
+                    <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme17.jpg" alt="Momazo Imperial #17" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+17+(img/memes/meme17.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #17</h4>
+                            <span class="meme-tag">Yunque</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 18 -->
+                    <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme18.jpg" alt="Momazo Imperial #18" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+18+(img/memes/meme18.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #18</h4>
+                            <span class="meme-tag">Triple T</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 19 -->
+                    <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme19.jpg" alt="Momazo Imperial #19" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+19+(img/memes/meme19.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #19</h4>
+                            <span class="meme-tag">Empresarios</span>
+                        </div>
+                    </article>
+
+                    <!-- Meme 20 -->
+                    <article class="meme-card" data-category="Lore" tabindex="0" role="button">
+                        <div class="meme-img-box">
+                            <img src="img/memes/meme20.jpg" alt="Momazo Imperial #20" loading="lazy"
+                                onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+20+(img/memes/meme20.jpg)'">
+                        </div>
+                        <div class="meme-info">
+                            <h4>Momazo Imperial #20</h4>
+                            <span class="meme-tag">Lore</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIGHTBOX DEL VISOR DE MEMES -->
+        <div id="memeLightbox" class="meme-lightbox hidden" aria-hidden="true">
+            <button id="closeMemeLightboxBtn" class="lightbox-close" aria-label="Cerrar visor de memes">✕</button>
+            <div class="lightbox-content" role="dialog" aria-modal="true" aria-labelledby="lightboxMemeTitle">
+                <img id="lightboxMemeImg" src="" alt="Meme ampliado">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.6rem; margin-bottom: 0.75rem;">
+                    <span id="lightboxMemeTag" class="meme-tag">Categoría</span>
+                    <h4 id="lightboxMemeTitle">Título del Meme</h4>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem;">
+                    <button id="prevMemeBtn" class="btn btn-secondary" type="button" style="padding: 0.45rem 1rem; border: none; cursor: pointer;">◀ Anterior</button>
+                    <span id="memeCounterText" style="font-weight: 700; font-size: 0.9rem; color: var(--text-secondary);">1 / 20</span>
+                    <button id="nextMemeBtn" class="btn btn-primary" type="button" style="padding: 0.45rem 1rem; border: none; cursor: pointer;">Siguiente ▶</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+ <!-- FOOTER CON LINKS DE VIDEOS -->
+    <footer id="videos" class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <h3>Archivo Audiovisual del Imperio Papu</h3>
+                    <p>Enlaces oficiales a los videos de los integrantes registrados en el Sagrado Lore 3.2.</p>
+                </div>
+            </div>
+
+            <div class="video-links-grid">
+                <a href="https://www.youtube.com/watch?v=SO-oRXFukts" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>JosephPool Dancing</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=swz7TZZ2wtg" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>DeadGatto Dancing</span>
+                </a>
+                <a href="https://www.youtube.com/shorts/Sh2-_p_ym1c" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Mi playa es!</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=pw52f-TLDW0" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Gameplay de tetris</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=PbMJEomkfQc" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Imperium</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=XJnVXHAoXq4" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Iceberg del Imperio Papu</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=D-vfOEy7rek" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Debate Presidencial Parte 1</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=Nm6Ioz-mdwY" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Debate Presidencial Parte 2</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=xlbVF4-6PX4" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Partida de MC</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=24JrzTDVqYM" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Creppypasta de Tetris</span>
+                </a>
+                <a href="https://www.youtube.com/watch?v=KEKaMo5GqIw&t=1s" target="_blank" rel="noopener noreferrer" class="video-link-card">
+                    <span class="play-icon">▶</span>
+                    <span>Debate Presidencial Lao vs MrPapu</span>
+                </a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 El Sagrado Lore del Imperio Papu 3.2 — Todos los derechos reservados al Imperio.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =================================================================
+        CUADRADO EXPLICATIVO DE HISTORIA DE FACCIONES
+    =================================================================== -->
+    <div id="faccionModalBackdrop" class="faccion-square-backdrop hidden" aria-hidden="true">
+        <div class="faccion-square-box" role="dialog" aria-modal="true" aria-labelledby="faccionSquareTitle">
+            <div class="faccion-square-header">
+                <span class="faccion-square-badge">ARCHIVO DE FACCIÓN</span>
+                <button id="closeFaccionSquareBtn" class="faccion-square-close" aria-label="Cerrar cuadrado explicativo">✕</button>
+            </div>
+            <h3 id="faccionSquareTitle" class="faccion-square-title">Nombre de la Facción</h3>
+            <p id="faccionSquareMembers" class="faccion-square-members">Integrantes</p>
+            <div class="faccion-square-body">
+                <h4>Historia de la Facción</h4>
+                <p id="faccionSquareHistory">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================
+         CUADRADO EXPLICATIVO DE CÍRCULOS IMPERIALES
+         ================================================================= -->
+    <div id="circleModalBackdrop" class="faccion-square-backdrop hidden" aria-hidden="true">
+        <div class="faccion-square-box" role="dialog" aria-modal="true" aria-labelledby="circleSquareTitle">
+            <div class="faccion-square-header">
+                <span class="faccion-square-badge" style="background: var(--imperial-red);">CÍRCULO IMPERIAL</span>
+                <button id="closeCircleSquareBtn" class="faccion-square-close" aria-label="Cerrar cuadrado explicativo">✕</button>
+            </div>
+            <h3 id="circleSquareTitle" class="faccion-square-title">Círculo del Infierno</h3>
+            <p id="circleSquareMember" class="faccion-square-members">Representante</p>
+            <div class="faccion-square-body">
+                <h4>Explicación del Círculo</h4>
+                <p id="circleSquareDescription">
+                    Descripción detallada del círculo imperial y su influencia en el lore.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================
+         REPRODUCTOR MULTICANCIONES GLASSMORPHISM
+         ================================================================= -->
+    <div class="music-player-glass" id="musicPlayer">
+        <audio id="bgMusic" preload="auto"></audio>
+
+        <div class="music-header">
+            <div class="music-status">
+                <span class="eq-bars" id="eqBars">
+                    <span></span><span></span><span></span>
+                </span>
+                <span class="music-title">Radio Lixbalt</span>
+            </div>
+            <button class="music-minimize-btn" id="minimizeMusicBtn" title="Minimizar/Expandir reproductor">
+                −
+            </button>
+        </div>
+
+        <div class="music-controls-body" id="musicControlsBody">
+            <div class="current-track-name" id="currentTrackName">Cargando pista...</div>
+            <select id="trackSelector" class="track-selector" aria-label="Seleccionar canción"></select>
+
+            <div class="playback-row">
+                <button class="music-btn-nav" id="prevTrackBtn" title="Canción anterior" aria-label="Canción anterior">
+                    ⏮
+                </button>
+                <button class="music-btn-play" id="playPauseBtn" aria-label="Reproducir o pausar música">
+                    <span id="playPauseIcon">▶</span>
+                    <span id="playPauseText">Continuar</span>
+                </button>
+                <button class="music-btn-nav" id="nextTrackBtn" title="Siguiente canción" aria-label="Siguiente canción">
+                    ⏭
+                </button>
+            </div>
+
+            <canvas id="audioVisualizerCanvas" class="audio-visualizer-canvas" width="240" height="46"></canvas>
+
+            <div class="volume-controls">
+                <button class="vol-step-btn" id="volDownBtn" title="Bajar volumen (-10%)" aria-label="Bajar volumen">
+                    🔉 −
+                </button>
+                <input type="range" id="volumeSlider" class="volume-slider" 
+                    min="0" max="1" step="0.05" value="0.5" aria-label="Control de volumen">
+                <button class="vol-step-btn" id="volUpBtn" title="Subir volumen (+10%)" aria-label="Subir volumen">
+                    🔊 +
+                </button>
+            </div>
+
+            <div class="volume-indicator">
+                Volumen: <strong id="volumeValue">50%</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- EASTER EGG: ICEBERG -->
+    <div id="icebergEasterEgg" class="iceberg-overlay hidden">
+        <canvas id="staticCanvas" class="static-canvas"></canvas>
+
+        <div id="countdownWrapper" class="countdown-wrapper">
+            <p class="countdown-tag">SEÑAL INTERCEPTADA // ARCHIVO SECRETO</p>
+            <h2 class="countdown-target-date">08 / 02 / 27</h2>
+
+            <div class="countdown-boxes">
+                <div class="cd-unit">
+                    <span id="cdDays" class="cd-number">00</span>
+                    <span class="cd-label">DÍAS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdHours" class="cd-number">00</span>
+                    <span class="cd-label">HORAS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdMinutes" class="cd-number">00</span>
+                    <span class="cd-label">MINUTOS</span>
+                </div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit">
+                    <span id="cdSeconds" class="cd-number">00</span>
+                    <span class="cd-label">SEGUNDOS</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="closeIcebergBtn" class="close-iceberg-btn">CERRAR SEÑAL [ESC / X]</button>
+    </div>
+
+    <!-- EASTER EGG: JUEGO DISTANT (P5.JS) -->
+    <div id="distantEasterEgg" class="distant-overlay hidden" aria-hidden="true">
+        <div class="distant-modal-header">
+            <div class="distant-title-group">
+                <span class="distant-badge">🎮 ARCHIVO SECRETO // DISTANT</span>
+                <span class="distant-controls-hint">WASD: Moverse | Click: Disparar | E: Parábola | R: Reiniciar</span>
+            </div>
+            <button id="closeDistantBtn" class="close-distant-btn" aria-label="Cerrar juego">CERRAR [ESC / X]</button>
+        </div>
+        <div id="distantCanvasContainer" class="distant-canvas-container"></div>
+    </div>
+
+    <!-- PANEL DE LOGROS DESBLOQUEABLES FLOTANTE -->
+    <div class="achievements-widget" id="achievementsWidget">
+        <button class="achievements-toggle-btn" id="achievementsToggleBtn" title="Ver Logros Imperiales">
+            🏆 <span id="achievementsCount">0/8</span>
+        </button>
+        <div class="achievements-panel hidden" id="achievementsPanel">
+            <div class="ach_panel_header">
+                <h3>Condecoraciones Imperiales</h3>
+                <button id="closeAchievementsBtn" class="ach_close_btn">✕</button>
+            </div>
+            <div class="ach_list">
+                <div class="ach_item" id="ach-explorer">
+                    <div class="ach_icon">🗺️</div>
+                    <div class="ach_info">
+                        <h4>Explorador del Abismo</h4>
+                        <p>Visita todas las secciones de las Facciones del Imperio.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-hacker">
+                    <div class="ach_icon">💻</div>
+                    <div class="ach_info">
+                        <h4>Hacker del Lore</h4>
+                        <p>Desbloquea el Easter Egg escribiendo una palabra secreta.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-audio">
+                    <div class="ach_icon">🎵</div>
+                    <div class="ach_info">
+                        <h4>Audiófilo Imperial</h4>
+                        <p>Reproduce al menos una canción en la Radio Lixbalt.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-meme">
+                    <div class="ach_icon">🃏</div>
+                    <div class="ach_info">
+                        <h4>Crítico de Momazos</h4>
+                        <p>Abre el visor de memes y haz clic en cualquier meme.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-distant">
+                    <div class="ach_icon">🐱</div>
+                    <div class="ach_info">
+                        <h4>Héroe de Distant</h4>
+                        <p>Derrota al jefe final en el juego secreto Distant.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <!-- 3 NUEVOS TROFEOS -->
+                <div class="ach_item" id="ach-judge">
+                    <div class="ach_icon">⚖️</div>
+                    <div class="ach_info">
+                        <h4>Sentenciado del Abismo</h4>
+                        <p>Completa el Test del Infierno Imperial y descubre tu Círculo.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-inquisidor">
+                    <div class="ach_icon">📜</div>
+                    <div class="ach_info">
+                        <h4>Inquisidor de los 9 Círculos</h4>
+                        <p>Inspecciona los archivos de al menos 5 Círculos Imperiales distintos.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+                <div class="ach_item" id="ach-cinema">
+                    <div class="ach_icon">🎬</div>
+                    <div class="ach_info">
+                        <h4>Cinéfilo Imperial</h4>
+                        <p>Reproduce cualquier archivo histórico en el Modo Cine Imperial.</p>
+                    </div>
+                    <span class="ach_status">🔒</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN DE LOGRO DESBLOQUEADO -->
+    <div id="achievementToast" class="achievement-toast hidden">
+        <div class="toast_icon">🏆</div>
+        <div class="toast_text">
+            <span>¡LOGRO DESBLOQUEADO!</span>
+            <h4 id="toastTitle">Nombre del logro</h4>
+        </div>
+    </div>
+
+    <!-- MODO CINE INTEGRADO (ARCHIVO AUDIOVISUAL) -->
+    <div id="cinemaModalBackdrop" class="cinema-modal-backdrop hidden" aria-hidden="true">
+        <div class="cinema-modal-box" role="dialog" aria-modal="true" aria-labelledby="cinemaVideoTitle">
+            <div class="cinema-modal-header">
+                <div class="cinema-title-wrap">
+                    <span class="faccion-square-badge">🎬 MODO CINE IMPERIAL</span>
+                    <h3 id="cinemaVideoTitle">Reproduciendo archivo...</h3>
+                </div>
+                <div class="cinema-header-actions">
+                    <a id="cinemaExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="cinema-ext-btn">
+                        Abrir en YouTube ↗
+                    </a>
+                    <button id="closeCinemaBtn" class="faccion-square-close" aria-label="Cerrar modo cine">✕</button>
+                </div>
+            </div>
+
+            <div class="cinema-video-wrapper" id="cinemaVideoWrapper"></div>
+
+            <div class="cinema-playlist-bar" id="cinemaPlaylistBar"></div>
+        </div>
+    </div>
+
+    <!-- Librerías de p5.js y script principal (solo una vez al final del body) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/addons/p5.sound.min.js"></script>
+    <script src="script.js"></script>
+    <script src="distant.js"></script>
+</body>
+</html>
+
+
