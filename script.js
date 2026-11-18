@@ -41,27 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Resaltado automático de la sección activa en el <nav>
-    const sections = document.querySelectorAll('section[id], footer[id]');
+    
 
-    window.addEventListener('scroll', () => {
-        let currentSection = '';
-        const scrollY = window.scrollY + 140;
-
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                currentSection = section.getAttribute('id');
-            }
-        });
-
-        navLinks.forEach(link => {
+    // 3. Resaltado automático de la página activa en el <nav>
+    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href') || '';
+        if (linkHref === currentFile || (currentFile === '' && linkHref === 'index.html')) {
+            link.classList.add('active');
+        } else {
             link.classList.remove('active');
-            if (link.getAttribute('href') === `#${currentSection}`) {
-                link.classList.add('active');
-            }
-        });
+        }
     });
 
     // =========================================================================
@@ -292,14 +282,19 @@ document.addEventListener('DOMContentLoaded', () => {
             window.unlockAchievement('ach-hacker');
         }
 
-        startDistantEngine();
+        if (typeof window.startDistantEngine === 'function') {
+            window.startDistantEngine();
+        }
     }
 
     function closeDistantGame() {
         if (!distantOverlay) return;
         distantOverlay.classList.add('hidden');
         distantOverlay.setAttribute('aria-hidden', 'true');
-        stopDistantEngine();
+
+        if (typeof window.stopDistantEngine === 'function') {
+            window.stopDistantEngine();
+        }
     }
 
     function triggerIcebergTransition() {
@@ -463,10 +458,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    closeFaccionSquareBtn.addEventListener('click', closeFaccionSquare);
-    faccionModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === faccionModalBackdrop) closeFaccionSquare();
-    });
+    if (closeFaccionSquareBtn) {
+        closeFaccionSquareBtn.addEventListener('click', closeFaccionSquare);
+    }
+    if (faccionModalBackdrop) {
+        faccionModalBackdrop.addEventListener('click', (e) => {
+            if (e.target === faccionModalBackdrop) closeFaccionSquare();
+        });
+    }
 
     // =========================================================================
     // 9. CUADRADO EXPLICATIVO PARA LOS CÍRCULOS IMPERIALES (AL HACER CLIC)
@@ -528,10 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    closeCircleSquareBtn.addEventListener('click', closeCircleSquare);
-    circleModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === circleModalBackdrop) closeCircleSquare();
-    });
+    if (closeCircleSquareBtn) {
+        closeCircleSquareBtn.addEventListener('click', closeCircleSquare);
+    }
+    if (circleModalBackdrop) {
+        circleModalBackdrop.addEventListener('click', (e) => {
+            if (e.target === circleModalBackdrop) closeCircleSquare();
+        });
+    }
 
     // =========================================================================
     // 11. SISTEMA DE LOGROS DESBLOQUEABLES (GAMIFICATION)
@@ -553,6 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'ach-inquisidor': false,
         'ach-cinema': false
     };
+
+    
 
     const savedAchievements = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
     let achievements = { ...defaultAchievements, ...savedAchievements };
@@ -610,28 +615,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const faccionCardsObserver = document.querySelectorAll('#facciones .info-card');
-    let viewedFactions = new Set();
+    
+    
 
+    let viewedFactions = new Set(JSON.parse(localStorage.getItem('imperio-papu-factions') || '[]'));
     faccionCardsObserver.forEach(card => {
         card.addEventListener('click', () => {
             const title = card.querySelector('h3').textContent;
             viewedFactions.add(title);
-            if (viewedFactions.size >= 3) {
-                unlockAchievement('ach-explorer');
-            }
+            localStorage.setItem('imperio-papu-factions', JSON.stringify([...viewedFactions]));
+            if (viewedFactions.size >= 3) unlockAchievement('ach-explorer');
         });
     });
 
-    let viewedCircles = new Set();
+    let viewedCircles = new Set(JSON.parse(localStorage.getItem('imperio-papu-circles') || '[]'));
     circleCards.forEach(card => {
         card.addEventListener('click', () => {
             const num = card.querySelector('.circle-num')?.textContent.trim();
             if (num) viewedCircles.add(num);
-            if (viewedCircles.size >= 5) {
-                unlockAchievement('ach-inquisidor');
-            }
+            localStorage.setItem('imperio-papu-circles', JSON.stringify([...viewedCircles]));
+            if (viewedCircles.size >= 5) unlockAchievement('ach-inquisidor');
         });
     });
+    
 
     const bgAudioEl = document.getElementById('bgMusic');
     if (bgAudioEl) {
@@ -655,736 +661,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tecla Escape general para modales
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (!faccionModalBackdrop.classList.contains('hidden')) closeFaccionSquare();
-            if (!circleModalBackdrop.classList.contains('hidden')) closeCircleSquare();
+            if (faccionModalBackdrop && !faccionModalBackdrop.classList.contains('hidden')) closeFaccionSquare();
+            if (circleModalBackdrop && !circleModalBackdrop.classList.contains('hidden')) closeCircleSquare();
         }
     });
 
-    // =========================================================================
-    // 12. MOTOR DEL JUEGO "DISTANT" (CANVAS 2D AUTÓNOMO, SIN BLOQUEO DE P5)
-    // =========================================================================
-    const container = document.getElementById('distantCanvasContainer');
-    let gameCanvas = document.getElementById('distantGameCanvas');
-    if (!gameCanvas && container) {
-        gameCanvas = document.createElement('canvas');
-        gameCanvas.id = 'distantGameCanvas';
-        gameCanvas.width = 800;
-        gameCanvas.height = 800;
-        container.innerHTML = '';
-        container.appendChild(gameCanvas);
-    }
-
-    const gctx = gameCanvas ? gameCanvas.getContext('2d') : null;
-    const width = 800;
-    const height = 800;
-    const startTime = performance.now();
-    function millis() {
-        return performance.now() - startTime;
-    }
-
-    // Creación de sprites con respaldo automático si falta algún archivo .png
-    function crearSprite(src, w, h, colorFondo, etiqueta) {
-        const off = document.createElement('canvas');
-        off.width = w;
-        off.height = h;
-        const octx = off.getContext('2d');
-
-        octx.fillStyle = colorFondo;
-        octx.fillRect(0, 0, w, h);
-        octx.strokeStyle = '#ffffff';
-        octx.lineWidth = 2;
-        octx.strokeRect(2, 2, w - 4, h - 4);
-        if (etiqueta) {
-            octx.fillStyle = '#ffffff';
-            octx.font = `bold ${Math.max(11, Math.floor(w / 4))}px sans-serif`;
-            octx.textAlign = 'center';
-            octx.textBaseline = 'middle';
-            octx.fillText(etiqueta, w / 2, h / 2);
-        }
-
-        const sprite = { canvas: off, width: w, height: h };
-        const img = new Image();
-        img.onload = () => {
-            octx.clearRect(0, 0, w, h);
-            octx.drawImage(img, 0, 0, w, h);
-        };
-        img.src = src;
-        return sprite;
-    }
-
-    let prota = crearSprite("distant/gato.png", 60, 60, "#22c55e", "GATO");
-    let prota1 = crearSprite("distant/gato1.png", 60, 60, "#16a34a", "GATO");
-    let lana = crearSprite("distant/enemigos.png", 50, 50, "#e63946", "LANA");
-    let powerup = crearSprite("distant/power-up.png", 50, 50, "#eab308", "PWR");
-    let Fondo = crearSprite("distant/Fondo.png", 800, 800, "#10161d", "");
-    let menuImg = crearSprite("distant/Menu.png", 800, 800, "#0b0f14", "");
-    let VillanoImg = crearSprite("distant/Villano.png", 100, 100, "#8b5cf6", "BOSS");
-
-    let px = width * 0.2;
-    let py = height * 0.2;
-    let speed = 3;
-    let movingUp = false;
-    let movingDown = false;
-    let movingLeft = false;
-    let movingRight = false;
-
-    let enemigos = [];
-    let projectiles = [];
-    let parabolas = [];
-    let ts = 8;
-    let fx = 0;
-    let currentImage = prota;
-    let lastEnemySpawnTime = 0;
-    let gameOver = false;
-    let puntuacion = 0;
-    const gris = "#323232";
-    const grisCLA = "#434343";
-    const blanco = "#FFFFFF";
-
-    let h = 0, k = 0, f = 0;
-    let enMenu = true;
-    let mostrarPantallaJuego = false;
-    let mostrarTextoHistoria = false;
-    let mostrarTextoCreditos = false;
-    let mostrarPantallaFin = false;
-    let mostrarPantallaVictory = false;
-
-    let tripleShotActive = false;
-    let tripleShotEndTime = 0;
-    let powerups = [];
-    let lastPowerupSpawnTime = 0;
-
-    let bossHealth = 10;
-    let bossMaxHealth = 10;
-    let bossSpeed = 1.5;
-    let bossHitboxWidth = 100;
-    let villanoProjectiles = [];
-    let lastVillanoShotTime = 0;
-
-    let bossEnemy = {
-        x: width / 2,
-        y: height / 2,
-        speed: bossSpeed,
-        lastShotTime: 0,
-        shotInterval: 1000
-    };
-
-    let shootParabola = false;
-    let parabolaInterval = 500;
-    let lastParabolaShotTime = 300;
-
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-    let mouseIsPressed = false;
-    let distantAnimId = null;
-    let distantRunning = false;
-
-    // Eventos del ratón escalados a 800x800
-    if (gameCanvas) {
-        gameCanvas.addEventListener('mousemove', (e) => {
-            const rect = gameCanvas.getBoundingClientRect();
-            mouseX = (e.clientX - rect.left) * (width / rect.width);
-            mouseY = (e.clientY - rect.top) * (height / rect.height);
-        });
-
-        gameCanvas.addEventListener('mousedown', (e) => {
-            if (!distantRunning) return;
-            const rect = gameCanvas.getBoundingClientRect();
-            mouseX = (e.clientX - rect.left) * (width / rect.width);
-            mouseY = (e.clientY - rect.top) * (height / rect.height);
-            mouseIsPressed = true;
-            handleMousePressed();
-        });
-
-        window.addEventListener('mouseup', () => {
-            mouseIsPressed = false;
-        });
-    }
-
-    // Eventos de teclado del juego
-    window.addEventListener('keydown', (e) => {
-        if (!distantRunning) return;
-        const key = e.key.toLowerCase();
-
-        if (!gameOver && mostrarPantallaJuego) {
-            if (key === "d") {
-                movingRight = true;
-                currentImage = prota;
-            }
-            if (key === "a") {
-                movingLeft = true;
-                currentImage = prota1;
-            }
-            if (key === "w") {
-                movingUp = true;
-            }
-            if (key === "s") {
-                movingDown = true;
-            }
-        }
-        if (enMenu && key === "enter") {
-            enMenu = false;
-            mostrarPantallaJuego = true;
-        }
-        if ((mostrarPantallaVictory || mostrarPantallaFin) && key === "r") {
-            restartGame();
-        }
-        if (key === "e") {
-            shootParabola = true;
-        }
-    });
-
-    window.addEventListener('keyup', (e) => {
-        if (!distantRunning) return;
-        const key = e.key.toLowerCase();
-        if (key === "e") shootParabola = false;
-        if (key === "d") movingRight = false;
-        if (key === "a") movingLeft = false;
-        if (key === "w") movingUp = false;
-        if (key === "s") movingDown = false;
-    });
-
-    function drawImageCenter(sprite, x, y) {
-        gctx.drawImage(sprite.canvas, x - sprite.width / 2, y - sprite.height / 2, sprite.width, sprite.height);
-    }
-
-    function drawWrappedText(texto, cx, cy, maxWidth, lineHeight) {
-        const words = texto.split(' ');
-        let line = '';
-        const lines = [];
-
-        for (let n = 0; n < words.length; n++) {
-            const testLine = line + words[n] + ' ';
-            const metrics = gctx.measureText(testLine);
-            if (metrics.width > maxWidth && n > 0) {
-                lines.push(line.trim());
-                line = words[n] + ' ';
-            } else {
-                line = testLine;
-            }
-        }
-        lines.push(line.trim());
-
-        const totalHeight = lines.length * lineHeight;
-        let startY = cy - totalHeight / 2 + lineHeight / 2;
-
-        for (let i = 0; i < lines.length; i++) {
-            gctx.fillText(lines[i], cx, startY + i * lineHeight);
-        }
-    }
-
-    function drawButton(txt, x, y, xl, yl) {
-        let fontSize = 57;
-        let btnColor = gris;
-        const inX = mouseX < x + xl / 2 && mouseX > x - xl / 2;
-        const inY = mouseY < y + yl / 2 && mouseY > y - yl / 2;
-
-        if (inX && inY) {
-            fontSize = 67;
-            btnColor = grisCLA;
-            if (mouseIsPressed) {
-                btnColor = "rgb(19, 0, 143)";
-                if (txt === "Jugar") {
-                    enMenu = false;
-                    mostrarPantallaJuego = true;
-                } else if (txt === "Historia") {
-                    enMenu = false;
-                    mostrarTextoHistoria = true;
-                } else if (txt === "Creditos") {
-                    enMenu = false;
-                    mostrarTextoCreditos = true;
-                } else if (txt === "Volver") {
-                    enMenu = true;
-                    mostrarTextoCreditos = false;
-                    mostrarTextoHistoria = false;
-                    mostrarPantallaJuego = false;
-                }
-            }
-        }
-
-        gctx.fillStyle = btnColor;
-        gctx.strokeStyle = "#ffffff";
-        gctx.lineWidth = 2;
-        gctx.fillRect(x - xl / 2, y - yl / 2, xl, yl);
-        gctx.strokeRect(x - xl / 2, y - yl / 2, xl, yl);
-
-        gctx.fillStyle = blanco;
-        gctx.font = `bold ${fontSize}px sans-serif`;
-        gctx.textAlign = "center";
-        gctx.textBaseline = "middle";
-        gctx.fillText(txt, x, y);
-    }
-
-    function showMenu() {
-        drawImageCenter(menuImg, width / 2 - fx, height / 2);
-        drawButton("Jugar", width / 2, height * 0.5, width * 0.3, height * 0.15);
-        drawButton("Creditos", width / 2, height * 0.8, width * 0.3, height * 0.15);
-        drawButton("Historia", width / 2, height * 0.2, width * 0.3, height * 0.15);
-    }
-
-    function showHistoria() {
-        gctx.fillStyle = "#000000";
-        gctx.fillRect(0, 0, width, height);
-        gctx.fillStyle = "#ffffff";
-        gctx.font = "22px sans-serif";
-        gctx.textAlign = "center";
-        gctx.textBaseline = "middle";
-        const texto = "En un futuro lejano tras el año 9329, la humanidad enfrenta una era de conflicto y avance tecnológico desmedido, desencadenado por el descubrimiento de la energía Loraxius y la creación del opresivo Imperio Terrano. Divididos entre quienes abogan por la erradicación de los Inhumanos y aquellos que prefieren integrarlos o utilizarlos, la sociedad se sumerge en una devastadora guerra conocida como El llanto de cristo por sus inmensas pérdidas. En medio de este caos, el soldado Gustabo, decidido a evitar más sufrimiento tras perder a su hermano por un error de su superior, utiliza un prototipo de viaje en el tiempo para alterar el curso de la historia y buscar justicia.";
-        drawWrappedText(texto, width / 2, height * 0.45, width * 0.7, 30);
-        drawButton("Volver", width / 2, height * 0.9, width * 0.6, height * 0.1);
-    }
-
-    function showCreditos() {
-        gctx.fillStyle = "#000000";
-        gctx.fillRect(0, 0, width, height);
-        gctx.fillStyle = "rgb(0, 255, 242)";
-        gctx.font = "bold 29px sans-serif";
-        gctx.textAlign = "center";
-        gctx.textBaseline = "middle";
-        const texto = "CREADO POR: Martiniano Enzo Diele y Juan Emanuel Valdez";
-        drawWrappedText(texto, width / 2, height / 2, width * 0.7, 38);
-        drawButton("Volver", width / 2, height * 0.10, width * 0.6, height * 0.1);
-    }
-
-    function drawGameScreen() {
-        drawImageCenter(Fondo, width / 2 - fx, height / 2);
-        drawImageCenter(currentImage, px, py);
-
-        handleProjectiles();
-        handleEnemies();
-        handlePowerups();
-        handleMovement();
-        handleVillano();
-        checkCollisions();
-        checkParabolaCollisions();
-        displayScore();
-        showPantallaVictory();
-    }
-
-    function handleVillano() {
-        if (puntuacion >= 20) {
-            const dx = px - bossEnemy.x;
-            const dy = py - bossEnemy.y;
-            const mag = Math.hypot(dx, dy) || 1;
-
-            bossEnemy.x += (dx / mag) * bossEnemy.speed;
-            bossEnemy.y += (dy / mag) * bossEnemy.speed;
-
-            drawImageCenter(VillanoImg, bossEnemy.x, bossEnemy.y);
-            drawBossHealthBar();
-            handleVillanoDisparo();
-        }
-    }
-
-    function handleVillanoDisparo() {
-        const currentTime = millis();
-        const increasedCadenceInterval = bossEnemy.shotInterval * 0.5;
-
-        if (currentTime - lastVillanoShotTime > increasedCadenceInterval) {
-            const dx = px - bossEnemy.x;
-            const dy = py - bossEnemy.y;
-            const mag = Math.hypot(dx, dy) || 1;
-            villanoProjectiles.push({
-                x: bossEnemy.x,
-                y: bossEnemy.y,
-                vx: (dx / mag) * 4,
-                vy: (dy / mag) * 4
-            });
-            lastVillanoShotTime = currentTime;
-        }
-
-        for (let i = villanoProjectiles.length - 1; i >= 0; i--) {
-            const p = villanoProjectiles[i];
-            gctx.fillStyle = "rgb(199, 69, 255)";
-            gctx.strokeStyle = "#000000";
-            gctx.lineWidth = 1;
-            gctx.beginPath();
-            gctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-            gctx.fill();
-            gctx.stroke();
-
-            p.x += p.vx;
-            p.y += p.vy;
-
-            if (puntuacion >= 20 && Math.hypot(p.x - px, p.y - py) < 15) {
-                gameOver = true;
-                mostrarPantallaFin = true;
-                mostrarPantallaJuego = false;
-            }
-
-            if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
-                villanoProjectiles.splice(i, 1);
-            }
-        }
-    }
-
-    function drawBossHealthBar() {
-        const healthBarWidth = 200;
-        const healthBarHeight = 20;
-        const x = bossEnemy.x - healthBarWidth / 2;
-        const y = bossEnemy.y - VillanoImg.height / 2 - healthBarHeight - 10;
-
-        const healthWidth = Math.max(0, (bossHealth / bossMaxHealth) * healthBarWidth);
-        gctx.fillStyle = "#ff0000";
-        gctx.fillRect(x, y, healthWidth, healthBarHeight);
-
-        gctx.strokeStyle = "#000000";
-        gctx.lineWidth = 2;
-        gctx.strokeRect(x, y, healthBarWidth, healthBarHeight);
-    }
-
-    function checkCollisions() {
-        for (let i = 0; i < enemigos.length; i++) {
-            const e = enemigos[i];
-            if (Math.hypot(px - e.x, py - e.y) < currentImage.width / 2) {
-                gameOver = true;
-                mostrarPantallaFin = true;
-                mostrarPantallaJuego = false;
-                break;
-            }
-        }
-    }
-
-    function checkParabolaCollisions() {
-        for (let i = parabolas.length - 1; i >= 0; i--) {
-            const p = parabolas[i];
-            let removed = false;
-
-            for (let j = enemigos.length - 1; j >= 0; j--) {
-                const e = enemigos[j];
-                if (Math.hypot(p.px - e.x, p.py - e.y) < 20) {
-                    parabolas.splice(i, 1);
-                    enemigos.splice(j, 1);
-                    puntuacion++;
-                    removed = true;
-                    break;
-                }
-            }
-            if (!removed && puntuacion >= 20) {
-                if (Math.hypot(p.px - bossEnemy.x, p.py - bossEnemy.y) < bossHitboxWidth / 2) {
-                    parabolas.splice(i, 1);
-                    bossHealth -= 1;
-                    if (bossHealth <= 0) {
-                        mostrarPantallaVictory = true;
-                    }
-                }
-            }
-        }
-    }
-
-    function handleProjectiles() {
-        for (let i = projectiles.length - 1; i >= 0; i--) {
-            const p = projectiles[i];
-            if (p.tx === undefined || p.ty === undefined) {
-                projectiles.splice(i, 1);
-                continue;
-            }
-
-            gctx.fillStyle = "#ffffff";
-            gctx.strokeStyle = "#000000";
-            gctx.lineWidth = 1;
-            gctx.beginPath();
-            gctx.arc(p.tx, p.ty, 5, 0, Math.PI * 2);
-            gctx.fill();
-            gctx.stroke();
-
-            p.tx += p.vx * ts;
-            p.ty += p.vy * ts;
-
-            if (p.tx < 0 || p.tx > width || p.ty < 0 || p.ty > height) {
-                projectiles.splice(i, 1);
-            } else {
-                let hit = false;
-                for (let j = enemigos.length - 1; j >= 0; j--) {
-                    const e = enemigos[j];
-                    if (Math.hypot(p.tx - e.x, p.ty - e.y) < 20) {
-                        projectiles.splice(i, 1);
-                        enemigos.splice(j, 1);
-                        puntuacion++;
-                        hit = true;
-                        break;
-                    }
-                }
-                if (!hit && puntuacion >= 20) {
-                    if (Math.hypot(p.tx - bossEnemy.x, p.ty - bossEnemy.y) < bossHitboxWidth / 2) {
-                        projectiles.splice(i, 1);
-                        bossHealth -= 1;
-                    }
-                }
-            }
-        }
-    }
-
-    function showPantallaVictory() {
-        if (bossHealth <= 0) {
-            mostrarPantallaVictory = true;
-
-            if (typeof window.unlockAchievement === 'function') {
-                window.unlockAchievement('ach-distant');
-            }
-
-            gctx.fillStyle = "#000000";
-            gctx.fillRect(0, 0, width, height);
-            gctx.fillStyle = "rgb(134, 255, 69)";
-            gctx.textAlign = "center";
-            gctx.textBaseline = "middle";
-            gctx.font = "bold 50px sans-serif";
-            gctx.fillText("Victory", width / 2, height / 2 - 100);
-            gctx.font = "30px sans-serif";
-            gctx.fillText("Puntuación: " + puntuacion, width / 2, height / 2);
-            gctx.fillText("Presiona 'R' para reiniciar", width / 2, height / 2 + 100);
-            mostrarPantallaFin = false;
-            mostrarPantallaJuego = false;
-        }
-    }
-
-    function handleEnemies() {
-        if (puntuacion <= 20) {
-            const currentTime = millis();
-            if (currentTime - lastEnemySpawnTime > 2000) {
-                let enemyX, enemyY;
-                const edge = Math.floor(Math.random() * 4);
-
-                switch (edge) {
-                    case 0:
-                        enemyX = Math.random() * width;
-                        enemyY = -50;
-                        break;
-                    case 1:
-                        enemyX = Math.random() * width;
-                        enemyY = height + 50;
-                        break;
-                    case 2:
-                        enemyX = -50;
-                        enemyY = Math.random() * height;
-                        break;
-                    case 3:
-                        enemyX = width + 50;
-                        enemyY = Math.random() * height;
-                        break;
-                }
-
-                enemigos.push({ x: enemyX, y: enemyY, speed: 1.8 });
-                lastEnemySpawnTime = currentTime;
-            }
-        }
-
-        for (let i = enemigos.length - 1; i >= 0; i--) {
-            const e = enemigos[i];
-            const dx = px - e.x;
-            const dy = py - e.y;
-            const mag = Math.hypot(dx, dy) || 1;
-            e.x += (dx / mag) * e.speed;
-            e.y += (dy / mag) * e.speed;
-            drawImageCenter(lana, e.x, e.y);
-
-            if (e.x < -60 || e.x > width + 60 || e.y < -60 || e.y > height + 60) {
-                enemigos.splice(i, 1);
-            }
-        }
-    }
-
-    function handlePowerups() {
-        const currentTime = millis();
-        if (currentTime - lastPowerupSpawnTime > 20000) {
-            powerups.push({
-                x: Math.random() * (width - 100) + 50,
-                y: Math.random() * (height - 100) + 50
-            });
-            lastPowerupSpawnTime = currentTime;
-        }
-
-        for (let i = powerups.length - 1; i >= 0; i--) {
-            const p = powerups[i];
-            drawImageCenter(powerup, p.x, p.y);
-
-            if (Math.hypot(px - p.x, py - p.y) < currentImage.width / 2) {
-                tripleShotActive = true;
-                tripleShotEndTime = millis() + 4000;
-                powerups.splice(i, 1);
-            }
-        }
-    }
-
-    function showGameOverScreen() {
-        gctx.fillStyle = "#000000";
-        gctx.fillRect(0, 0, width, height);
-        gctx.fillStyle = "#ff0000";
-        gctx.textAlign = "center";
-        gctx.textBaseline = "middle";
-        gctx.font = "bold 50px sans-serif";
-        gctx.fillText("Game Over", width / 2, height / 2 - 100);
-        gctx.font = "30px sans-serif";
-        gctx.fillText("Puntuación: " + puntuacion, width / 2, height / 2);
-        gctx.fillText("Presiona 'R' para reiniciar", width / 2, height / 2 + 100);
-    }
-
-    function displayScore() {
-        gctx.fillStyle = "#ffffff";
-        gctx.font = "bold 20px sans-serif";
-        gctx.textAlign = "left";
-        gctx.textBaseline = "top";
-        gctx.fillText("Score: " + puntuacion, 15, 15);
-    }
-
-    function handleMousePressed() {
-        if (enMenu) {
-            if (mouseX > width / 2 - (width * 0.3) / 2 && mouseX < width / 2 + (width * 0.3) / 2) {
-                if (mouseY > height * 0.5 - (height * 0.15) / 2 && mouseY < height * 0.5 + (height * 0.15) / 2) {
-                    enMenu = false;
-                    mostrarPantallaJuego = true;
-                } else if (mouseY > height * 0.8 - (height * 0.15) / 2 && mouseY < height * 0.8 + (height * 0.15) / 2) {
-                    enMenu = false;
-                    mostrarTextoCreditos = true;
-                } else if (mouseY > height * 0.2 - (height * 0.15) / 2 && mouseY < height * 0.2 + (height * 0.15) / 2) {
-                    enMenu = false;
-                    mostrarTextoHistoria = true;
-                }
-            }
-        } else if (mostrarTextoHistoria) {
-            if (mouseX > width / 2 - (width * 0.6) / 2 && mouseX < width / 2 + (width * 0.6) / 2) {
-                if (mouseY > height * 0.9 - (height * 0.1) / 2 && mouseY < height * 0.9 + (height * 0.1) / 2) {
-                    enMenu = true;
-                    mostrarTextoHistoria = false;
-                }
-            }
-        } else if (mostrarTextoCreditos) {
-            if (mouseX > width / 2 - (width * 0.6) / 2 && mouseX < width / 2 + (width * 0.6) / 2) {
-                if (mouseY > height * 0.1 - (height * 0.1) / 2 && mouseY < height * 0.1 + (height * 0.1) / 2) {
-                    enMenu = true;
-                    mostrarTextoCreditos = false;
-                }
-            }
-        } else if (mostrarPantallaJuego && !gameOver) {
-            const baseAngle = Math.atan2(mouseY - py, mouseX - px);
-            if (tripleShotActive) {
-                for (let i = 0; i < 3; i++) {
-                    const angleOffset = (i - 1) * (Math.PI / 6);
-                    projectiles.push({
-                        tx: px,
-                        ty: py,
-                        vx: Math.cos(baseAngle + angleOffset),
-                        vy: Math.sin(baseAngle + angleOffset)
-                    });
-                }
-            } else {
-                projectiles.push({
-                    tx: px,
-                    ty: py,
-                    vx: Math.cos(baseAngle),
-                    vy: Math.sin(baseAngle)
-                });
-            }
-        }
-    }
-
-    function handleMovement() {
-        if (movingRight && px < width - currentImage.width / 2) px += speed;
-        if (movingLeft && px > currentImage.width / 2) px -= speed;
-        if (movingUp && py > currentImage.height / 2) py -= speed;
-        if (movingDown && py < height - currentImage.height / 2) py += speed;
-    }
-
-    function restartGame() {
-        gameOver = false;
-        mostrarPantallaFin = false;
-        mostrarPantallaVictory = false;
-        px = width * 0.2;
-        py = height * 0.2;
-        projectiles = [];
-        villanoProjectiles = [];
-        parabolas = [];
-        enemigos = [];
-        currentImage = prota;
-        puntuacion = 0;
-        mostrarPantallaJuego = true;
-        tripleShotActive = false;
-        bossHealth = 50;
-        bossMaxHealth = 50;
-        bossEnemy.x = width / 2;
-        bossEnemy.y = height / 2;
-    }
-
-    function calculateParabolic(x, hVal) {
-        return ((x - hVal) * (x - hVal)) / 200;
-    }
-
-    function onScreen(x, y) {
-        return x > 0 && x < width && y > 0 && y < height;
-    }
-
-    function distantLoop() {
-        if (!distantRunning || !gctx) return;
-
-        if (enMenu) {
-            showMenu();
-        } else if (mostrarPantallaJuego) {
-            drawGameScreen();
-        } else if (mostrarTextoHistoria) {
-            showHistoria();
-        } else if (mostrarTextoCreditos) {
-            showCreditos();
-        } else if (mostrarPantallaFin) {
-            showGameOverScreen();
-        } else if (mostrarPantallaVictory) {
-            showPantallaVictory();
-        }
-
-        if (tripleShotActive && millis() > tripleShotEndTime) {
-            tripleShotActive = false;
-        }
-
-        if (shootParabola && mostrarPantallaJuego && !gameOver) {
-            const currentTime = millis();
-            if (currentTime - lastParabolaShotTime >= parabolaInterval) {
-                h = px + 10;
-                f = py + 10;
-                k = mouseX;
-                const dir = (mouseX < px) ? -4 : 4;
-                parabolas.push({ px: h, py: f, h: h, k: k, startY: f, dir: dir });
-                lastParabolaShotTime = currentTime;
-            }
-            shootParabola = false;
-        }
-
-        for (let i = parabolas.length - 1; i >= 0; i--) {
-            const p = parabolas[i];
-            p.px += p.dir;
-            p.py = p.startY + calculateParabolic(p.px, p.h);
-            gctx.fillStyle = "rgb(0, 255, 0)";
-            gctx.beginPath();
-            gctx.arc(p.px, p.py, 5, 0, Math.PI * 2);
-            gctx.fill();
-
-            if (!onScreen(p.px, p.py)) {
-                parabolas.splice(i, 1);
-            }
-        }
-
-        distantAnimId = requestAnimationFrame(distantLoop);
-    }
-
-    function startDistantEngine() {
-        if (distantRunning) return;
-        distantRunning = true;
-        lastEnemySpawnTime = millis();
-        lastPowerupSpawnTime = millis();
-        distantAnimId = requestAnimationFrame(distantLoop);
-    }
-
-    function stopDistantEngine() {
-        distantRunning = false;
-        movingUp = false;
-        movingDown = false;
-        movingLeft = false;
-        movingRight = false;
-        shootParabola = false;
-        if (distantAnimId) {
-            cancelAnimationFrame(distantAnimId);
-            distantAnimId = null;
-        }
-    }
-});
+});    
 
 // =========================================================================
 // 13. NUEVAS FUNCIONES: VISUALIZADOR, BUSCADOR BIO, TEST INFIERNO Y MODO CINE
@@ -1890,25 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (startQuizBtn) startQuizBtn.addEventListener('click', startHellQuiz);
-    if (retryQuizBtn) retryQuizBtn.addEventListener('click', startHellQuiz);
-
-    if (highlightCircleBtn) {
-        highlightCircleBtn.addEventListener('click', () => {
-            const allCircleCards = document.querySelectorAll('#circlesGrid .circle-card');
-            allCircleCards.forEach(c => c.classList.remove('circle-highlighted'));
-
-            allCircleCards.forEach(card => {
-                const numSpan = card.querySelector('.circle-num');
-                if (numSpan && numSpan.textContent.trim() === winningRoman) {
-                    card.classList.add('circle-highlighted');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => card.click(), 450);
-                }
-            });
-        });
-    }
-
+    
     if (startQuizBtn) startQuizBtn.addEventListener('click', startHellQuiz);
     if (retryQuizBtn) retryQuizBtn.addEventListener('click', startHellQuiz);
 
@@ -2206,64 +1470,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowRight') showNextMeme();
         if (e.key === 'ArrowLeft') showPrevMeme();
     });
+}); // <-- Cierre correcto de la Sección 13
 
-
-    // =========================================================================
+// =========================================================================
 // 14. EXPANSIÓN IMPERIAL: SFX, PROGRESO DE RADIO, REINICIO, CERTIFICADO Y ECLIPSE
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const htmlEl = document.documentElement;
     const bgMusic = document.getElementById('bgMusic');
-    const musicControlsBody = document.getElementById('musicControlsBody');
-    const visCanvas = document.getElementById('audioVisualizerCanvas');
-    const achievementsPanel = document.getElementById('achievementsPanel');
     const achievementsCount = document.getElementById('achievementsCount');
-    const themeToggleBtn = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeText = document.getElementById('themeText');
     const achievementToast = document.getElementById('achievementToast');
     const toastTitle = document.getElementById('toastTitle');
-
-    // Inyección preventiva de elementos si no están en index.html
-    if (musicControlsBody && !document.getElementById('trackProgressContainer')) {
-        const progressHTML = `
-            <div class="track-progress-container" id="trackProgressContainer">
-                <span id="trackCurrentTime" class="track-time">0:00</span>
-                <input type="range" id="trackSeekSlider" class="track-seek-slider" 
-                    min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
-                <span id="trackDuration" class="track-time">0:00</span>
-            </div>
-        `;
-        if (visCanvas) {
-            visCanvas.insertAdjacentHTML('afterend', progressHTML);
-        } else {
-            musicControlsBody.insertAdjacentHTML('beforeend', progressHTML);
-        }
-    }
-
-    if (achievementsPanel && !document.getElementById('achPanelFooter')) {
-        const footerHTML = `
-            <div class="ach_panel_footer" id="achPanelFooter">
-                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button">🔊 SFX: ON</button>
-                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button">🗑️ Reiniciar Logros</button>
-            </div>
-        `;
-        achievementsPanel.insertAdjacentHTML('beforeend', footerHTML);
-    }
-
-    const quizResultActions = document.querySelector('#quizResultView .quiz-result-actions');
-    if (quizResultActions && !document.getElementById('downloadCertBtn')) {
-        const retryBtn = document.getElementById('retryQuizBtn');
-        const certBtn = document.createElement('button');
-        certBtn.id = 'downloadCertBtn';
-        certBtn.className = 'btn btn-secondary';
-        certBtn.textContent = '📜 Descargar Certificado';
-        if (retryBtn) {
-            quizResultActions.insertBefore(certBtn, retryBtn);
-        } else {
-            quizResultActions.appendChild(certBtn);
-        }
-    }
 
     // -------------------------------------------------------------------------
     // A. EFECTOS DE SONIDO DE INTERFAZ (WEB AUDIO API)
@@ -2290,14 +1507,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(240, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(340, ctx.currentTime + 0.035);
-            gain.gain.setValueAtTime(0.025, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
+            osc.frequency.setValueAtTime(260, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.04);
+            gain.gain.setValueAtTime(0.03, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start();
-            osc.stop(ctx.currentTime + 0.04);
+            osc.stop(ctx.currentTime + 0.045);
         },
         click() {
             const ctx = getSfxContext();
@@ -2305,14 +1522,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(520, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.065);
-            gain.gain.setValueAtTime(0.08, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.065);
+            osc.frequency.setValueAtTime(540, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(170, ctx.currentTime + 0.07);
+            gain.gain.setValueAtTime(0.09, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start();
-            osc.stop(ctx.currentTime + 0.07);
+            osc.stop(ctx.currentTime + 0.075);
         },
         modal() {
             const ctx = getSfxContext();
@@ -2320,9 +1537,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(180, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(460, ctx.currentTime + 0.16);
-            gain.gain.setValueAtTime(0.07, ctx.currentTime);
+            osc.frequency.setValueAtTime(190, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(480, ctx.currentTime + 0.16);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -2332,14 +1549,14 @@ document.addEventListener('DOMContentLoaded', () => {
         unlock() {
             const ctx = getSfxContext();
             if (!ctx) return;
-            const notes = [523.25, 659.25, 783.99, 1046.50]; // Do5, Mi5, Sol5, Do6
+            const notes = [523.25, 659.25, 783.99, 1046.50];
             notes.forEach((freq, idx) => {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 const start = ctx.currentTime + idx * 0.08;
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, start);
-                gain.gain.setValueAtTime(0.11, start);
+                gain.gain.setValueAtTime(0.12, start);
                 gain.gain.exponentialRampToValueAtTime(0.001, start + 0.24);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
@@ -2355,7 +1572,7 @@ document.addEventListener('DOMContentLoaded', () => {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(380, ctx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(95, ctx.currentTime + 0.25);
-            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
             osc.connect(gain);
             gain.connect(ctx.destination);
@@ -2364,12 +1581,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Eventos globales de sonido para tarjetas y botones
     document.querySelectorAll('.bio-card, .info-card, .circle-card, .meme-card, .video-link-card').forEach(el => {
         el.addEventListener('mouseenter', () => ImperialSFX.hover());
     });
 
     document.addEventListener('click', (e) => {
+        if (e.target.closest('#sfxToggleBtn, #resetAchievementsBtn')) return;
         if (e.target.closest('button, .btn, .nav-link, .video-link-card')) {
             ImperialSFX.click();
         } else if (e.target.closest('.info-card, .circle-card, .meme-card')) {
@@ -2379,15 +1596,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sfxToggleBtn = document.getElementById('sfxToggleBtn');
     if (sfxToggleBtn) {
-        const updateSfxBtnText = () => {
+        const updateSfxUI = () => {
             sfxToggleBtn.textContent = sfxEnabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+            sfxToggleBtn.style.opacity = sfxEnabled ? '1' : '0.6';
         };
-        updateSfxBtnText();
-        sfxToggleBtn.addEventListener('click', () => {
+        updateSfxUI();
+
+        sfxToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             sfxEnabled = !sfxEnabled;
             localStorage.setItem('imperio-papu-sfx', sfxEnabled ? 'on' : 'off');
-            updateSfxBtnText();
-            if (sfxEnabled) ImperialSFX.click();
+            updateSfxUI();
+            if (sfxEnabled) ImperialSFX.unlock();
         });
     }
 
@@ -2406,115 +1626,172 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${mins}:${String(secs).padStart(2, '0')}`;
     }
 
-    if (bgMusic && trackSeekSlider) {
-        bgMusic.addEventListener('loadedmetadata', () => {
-            trackDuration.textContent = formatAudioTime(bgMusic.duration);
-        });
+    function syncProgressUI() {
+        if (!bgMusic || !trackSeekSlider || isSeekingTrack) return;
+        const cur = bgMusic.currentTime || 0;
+        const dur = bgMusic.duration || 0;
+        trackCurrentTime.textContent = formatAudioTime(cur);
+        if (isFinite(dur) && dur > 0) {
+            trackDuration.textContent = formatAudioTime(dur);
+            trackSeekSlider.value = ((cur / dur) * 100).toFixed(2);
+        } else {
+            trackDuration.textContent = '0:00';
+            trackSeekSlider.value = 0;
+        }
+    }
 
-        bgMusic.addEventListener('timeupdate', () => {
-            if (isSeekingTrack) return;
-            trackCurrentTime.textContent = formatAudioTime(bgMusic.currentTime);
-            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
-                trackSeekSlider.value = ((bgMusic.currentTime / bgMusic.duration) * 100).toFixed(2);
-                trackDuration.textContent = formatAudioTime(bgMusic.duration);
-            }
-        });
+    if (bgMusic && trackSeekSlider) {
+        bgMusic.addEventListener('loadedmetadata', syncProgressUI);
+        bgMusic.addEventListener('durationchange', syncProgressUI);
+        bgMusic.addEventListener('timeupdate', syncProgressUI);
 
         trackSeekSlider.addEventListener('input', (e) => {
             isSeekingTrack = true;
-            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
-                const previewTime = (parseFloat(e.target.value) / 100) * bgMusic.duration;
-                trackCurrentTime.textContent = formatAudioTime(previewTime);
+            const dur = bgMusic.duration;
+            if (isFinite(dur) && dur > 0) {
+                trackCurrentTime.textContent = formatAudioTime((parseFloat(e.target.value) / 100) * dur);
             }
         });
 
         trackSeekSlider.addEventListener('change', (e) => {
-            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
-                bgMusic.currentTime = (parseFloat(e.target.value) / 100) * bgMusic.duration;
+            const dur = bgMusic.duration;
+            if (isFinite(dur) && dur > 0) {
+                bgMusic.currentTime = (parseFloat(e.target.value) / 100) * dur;
             }
             isSeekingTrack = false;
         });
     }
 
     // -------------------------------------------------------------------------
-    // C. TERCER TEMA VISUAL DESBLOQUEABLE ("MODO ECLIPSE") Y REINICIO DE LOGROS
+    // B2. CONTINUIDAD ININTERRUMPIDA DE MÚSICA ENTRE PÁGINAS
+    // -------------------------------------------------------------------------
+    if (bgMusic) {
+        // 1. Restaurar el segundo exacto y el estado de reproducción al cargar la página
+        const savedTime = parseFloat(sessionStorage.getItem('imperio-papu-time')) || 0;
+        const wasPlaying = sessionStorage.getItem('imperio-papu-playing') === 'true';
+        const savedTrack = sessionStorage.getItem('imperio-papu-last-track');
+        const currentTrack = localStorage.getItem('imperio-papu-track') || '0';
+
+        const restorePlaybackPosition = () => {
+            if (savedTrack === currentTrack && savedTime > 0 && isFinite(bgMusic.duration)) {
+                bgMusic.currentTime = Math.min(savedTime, bgMusic.duration - 0.5);
+            }
+            if (wasPlaying && bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    const playPauseBtn = document.getElementById('playPauseBtn');
+                    const playPauseIcon = document.getElementById('playPauseIcon');
+                    const playPauseText = document.getElementById('playPauseText');
+                    const eqBars = document.getElementById('eqBars');
+                    if (playPauseIcon) playPauseIcon.textContent = '⏸';
+                    if (playPauseText) playPauseText.textContent = 'Pausar';
+                    if (playPauseBtn) playPauseBtn.classList.add('is-playing');
+                    if (eqBars) eqBars.classList.add('playing');
+                }).catch(() => {});
+            }
+        };
+
+        if (bgMusic.readyState >= 1) {
+            restorePlaybackPosition();
+        } else {
+            bgMusic.addEventListener('loadedmetadata', restorePlaybackPosition, { once: true });
+        }
+
+        // 2. Guardar segundo exacto y estado en tiempo real
+        const saveAudioState = () => {
+            sessionStorage.setItem('imperio-papu-time', String(bgMusic.currentTime || 0));
+            sessionStorage.setItem('imperio-papu-playing', (!bgMusic.paused && !bgMusic.ended) ? 'true' : 'false');
+            sessionStorage.setItem('imperio-papu-last-track', localStorage.getItem('imperio-papu-track') || '0');
+        };
+
+        bgMusic.addEventListener('timeupdate', saveAudioState);
+        bgMusic.addEventListener('play', saveAudioState);
+        bgMusic.addEventListener('pause', saveAudioState);
+        window.addEventListener('beforeunload', saveAudioState);
+        window.addEventListener('pagehide', saveAudioState);
+
+        // Si el usuario cambia de canción manualmente, reiniciar el tiempo guardado a 0
+        const prevBtn = document.getElementById('prevTrackBtn');
+        const nextBtn = document.getElementById('nextTrackBtn');
+        const selector = document.getElementById('trackSelector');
+        const resetSavedTime = () => sessionStorage.setItem('imperio-papu-time', '0');
+
+        if (prevBtn) prevBtn.addEventListener('click', resetSavedTime);
+        if (nextBtn) nextBtn.addEventListener('click', resetSavedTime);
+        if (selector) selector.addEventListener('change', resetSavedTime);
+    }
+
+    // -------------------------------------------------------------------------
+    // C. MODO ECLIPSE (EN EL BOTÓN DE TEMA) Y REINICIO DE CONDECORACIONES
     // -------------------------------------------------------------------------
     const allAchievementIds = [
         'ach-explorer', 'ach-hacker', 'ach-audio', 'ach-meme',
         'ach-distant', 'ach-judge', 'ach-inquisidor', 'ach-cinema'
     ];
 
-    function areAllAchievementsUnlocked() {
-        const stored = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
-        return allAchievementIds.every(id => stored[id] === true);
+    // Clonamos el botón de tema para eliminar el listener antiguo de la Sección 1
+    // y permitir alternar entre los 3 modos: Oscuro -> Claro -> Eclipse -> Oscuro
+    const oldThemeBtn = document.getElementById('themeToggle');
+    let activeThemeBtn = oldThemeBtn;
+    if (oldThemeBtn && oldThemeBtn.parentNode) {
+        activeThemeBtn = oldThemeBtn.cloneNode(true);
+        oldThemeBtn.parentNode.replaceChild(activeThemeBtn, oldThemeBtn);
     }
 
+    const themeIconEl = document.getElementById('themeIcon');
+    const themeTextEl = document.getElementById('themeText');
+
     function applyImperialTheme(theme) {
-        const validTheme = (theme === 'eclipse' && !areAllAchievementsUnlocked()) ? 'dark' : theme;
-        htmlEl.setAttribute('data-theme', validTheme);
-        localStorage.setItem('imperio-papu-theme', validTheme);
+        const validThemes = ['dark', 'light', 'eclipse'];
+        const chosen = validThemes.includes(theme) ? theme : 'dark';
+        htmlEl.setAttribute('data-theme', chosen);
+        localStorage.setItem('imperio-papu-theme', chosen);
 
-        if (!themeIcon || !themeText) return;
-        const eclipseUnlocked = areAllAchievementsUnlocked();
-
-        if (validTheme === 'dark') {
-            themeIcon.textContent = '☀️';
-            themeText.textContent = 'Modo Claro';
-        } else if (validTheme === 'light') {
-            if (eclipseUnlocked) {
-                themeIcon.textContent = '🌑';
-                themeText.textContent = 'Modo Eclipse';
-            } else {
-                themeIcon.textContent = '🌙';
-                themeText.textContent = 'Modo Oscuro';
-            }
-        } else if (validTheme === 'eclipse') {
-            themeIcon.textContent = '🌙';
-            themeText.textContent = 'Modo Oscuro';
+        if (!themeIconEl || !themeTextEl) return;
+        if (chosen === 'dark') {
+            themeIconEl.textContent = '☀️';
+            themeTextEl.textContent = 'Modo Claro';
+        } else if (chosen === 'light') {
+            themeIconEl.textContent = '🌑';
+            themeTextEl.textContent = 'Modo Eclipse';
+        } else if (chosen === 'eclipse') {
+            themeIconEl.textContent = '🌙';
+            themeTextEl.textContent = 'Modo Oscuro';
         }
     }
 
-    // Reemplaza el comportamiento del botón de tema para incluir Modo Eclipse si 8/8 están activos
-    if (themeToggleBtn) {
+    if (activeThemeBtn) {
         applyImperialTheme(localStorage.getItem('imperio-papu-theme') || 'dark');
 
-        themeToggleBtn.addEventListener('click', (e) => {
-            e.stopImmediatePropagation();
+        activeThemeBtn.addEventListener('click', () => {
             ImperialSFX.click();
             const current = htmlEl.getAttribute('data-theme') || 'dark';
-            const eclipseUnlocked = areAllAchievementsUnlocked();
-
-            let nextTheme = 'dark';
-            if (current === 'dark') {
-                nextTheme = 'light';
-            } else if (current === 'light') {
-                nextTheme = eclipseUnlocked ? 'eclipse' : 'dark';
-            } else {
-                nextTheme = 'dark';
-            }
-            applyImperialTheme(nextTheme);
-        }, true);
+            const next = current === 'dark' ? 'light' : (current === 'light' ? 'eclipse' : 'dark');
+            applyImperialTheme(next);
+        });
     }
 
-    // Interceptar window.unlockAchievement para añadir sonido y avisar del Modo Eclipse al llegar a 8/8
+    // Sonido al desbloquear logros y activación automática del Modo Eclipse al llegar a 8/8
     const baseUnlockAchievement = window.unlockAchievement;
     if (typeof baseUnlockAchievement === 'function') {
         window.unlockAchievement = function(achId) {
-            const wasUnlocked = (JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {})[achId];
-            baseUnlockAchievement(achId);
-            const isNowUnlocked = (JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {})[achId];
+            const prevStored = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
+            const wasUnlocked = prevStored[achId] === true;
 
-            if (!wasUnlocked && isNowUnlocked) {
+            baseUnlockAchievement(achId);
+
+            const nowStored = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
+            if (!wasUnlocked && nowStored[achId] === true) {
                 ImperialSFX.unlock();
-                if (areAllAchievementsUnlocked()) {
-                    applyImperialTheme(htmlEl.getAttribute('data-theme') || 'dark');
+                const allDone = allAchievementIds.every(id => nowStored[id] === true);
+                if (allDone) {
+                    applyImperialTheme('eclipse');
                     setTimeout(() => {
                         if (achievementToast && toastTitle) {
-                            toastTitle.textContent = '🌑 ¡MODO ECLIPSE DESBLOQUEADO EN EL BOTÓN DE TEMA!';
+                            toastTitle.textContent = '🌑 ¡MODO ECLIPSE ACTIVADO!';
                             achievementToast.classList.remove('hidden');
                             achievementToast.classList.add('show');
                             ImperialSFX.unlock();
-                            setTimeout(() => achievementToast.classList.remove('show'), 4200);
+                            setTimeout(() => achievementToast.classList.remove('show'), 4000);
                         }
                     }, 3800);
                 }
@@ -2525,9 +1802,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botón de Reinicio de Condecoraciones
     const resetAchievementsBtn = document.getElementById('resetAchievementsBtn');
     if (resetAchievementsBtn) {
-        resetAchievementsBtn.addEventListener('click', () => {
-            localStorage.removeItem('imperio-papu-achievements');
+        resetAchievementsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             ImperialSFX.reset();
+            
+            localStorage.removeItem('imperio-papu-achievements');
+            localStorage.removeItem('imperio-papu-achievements');
+            localStorage.removeItem('imperio-papu-factions');
+            localStorage.removeItem('imperio-papu-circles');
 
             allAchievementIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -2542,14 +1824,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 achievementsCount.textContent = `0/${allAchievementIds.length}`;
             }
 
-            if (htmlEl.getAttribute('data-theme') === 'eclipse') {
-                applyImperialTheme('dark');
-            } else {
-                applyImperialTheme(htmlEl.getAttribute('data-theme') || 'dark');
+            if (achievementToast && toastTitle) {
+                toastTitle.textContent = 'Condecoraciones reiniciadas a 0/8';
+                achievementToast.classList.remove('hidden');
+                achievementToast.classList.add('show');
             }
 
-            // Recargar brevemente el estado en memoria para permitir volver a ganarlos sin refrescar
-            setTimeout(() => window.location.reload(), 350);
+            setTimeout(() => window.location.reload(), 550);
         });
     }
 
@@ -2588,14 +1869,12 @@ document.addEventListener('DOMContentLoaded', () => {
             certCanvas.height = 560;
             const cctx = certCanvas.getContext('2d');
 
-            // Fondo abismal imperial
             const bgGrad = cctx.createRadialGradient(450, 280, 50, 450, 280, 520);
             bgGrad.addColorStop(0, '#1f070d');
             bgGrad.addColorStop(1, '#090b10');
             cctx.fillStyle = bgGrad;
             cctx.fillRect(0, 0, 900, 560);
 
-            // Marcos ornamentales dobles
             cctx.strokeStyle = '#e63946';
             cctx.lineWidth = 4;
             cctx.strokeRect(24, 24, 852, 512);
@@ -2604,7 +1883,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.lineWidth = 1.5;
             cctx.strokeRect(36, 36, 828, 488);
 
-            // Encabezado
             cctx.fillStyle = '#eab308';
             cctx.font = 'bold 16px sans-serif';
             cctx.textAlign = 'center';
@@ -2614,7 +1892,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.font = 'bold 28px sans-serif';
             cctx.fillText('SENTENCIA DEL JUICIO IMPERIAL', 450, 122);
 
-            // Número romano central en medallón
             cctx.beginPath();
             cctx.arc(450, 205, 52, 0, Math.PI * 2);
             cctx.fillStyle = 'rgba(230, 57, 70, 0.2)';
@@ -2628,7 +1905,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.textBaseline = 'middle';
             cctx.fillText(romanNum, 450, 207);
 
-            // Título del Círculo y Guardián
             cctx.textBaseline = 'alphabetic';
             cctx.fillStyle = '#ffffff';
             cctx.font = 'bold 34px sans-serif';
@@ -2638,12 +1914,10 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.font = 'bold 21px sans-serif';
             cctx.fillText(guardianText, 450, 342);
 
-            // Descripción del dictamen
             cctx.fillStyle = '#cbd5e1';
             cctx.font = 'italic 18px sans-serif';
             wrapCanvasParagraph(cctx, `"${descText}"`, 450, 392, 700, 28);
 
-            // Pie de certificado con fecha y sello
             const dateStr = new Date().toLocaleDateString('es-AR', {
                 year: 'numeric', month: '2-digit', day: '2-digit'
             });
@@ -2656,12 +1930,10 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.textAlign = 'right';
             cctx.fillText('SELLO DEL SAGRADO LORE IMPERIAL ★', 840, 495);
 
-            // Descarga directa en PNG
             const link = document.createElement('a');
             link.download = `certificado-imperio-papu-circulo-${romanNum}.png`;
             link.href = certCanvas.toDataURL('image/png');
             link.click();
         });
     }
-});
 });
