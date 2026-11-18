@@ -2243,3 +2243,121 @@ body {
     color: #fff;
     border-color: var(--imperial-red);
 }
+
+/* ==========================================================================
+   BARRA DE PROGRESO DE RADIO LIXBALT
+   ========================================================================== */
+.track-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.35rem 0 0.5rem;
+}
+
+.track-time {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary, #94a3b8);
+    min-width: 28px;
+    font-variant-numeric: tabular-nums;
+}
+
+.track-seek-slider {
+    flex: 1;
+    height: 5px;
+    accent-color: #22c55e;
+    cursor: pointer;
+    border-radius: 999px;
+}
+
+/* ==========================================================================
+   PIE DEL PANEL DE LOGROS (REINICIO Y CONTROL SFX)
+   ========================================================================== */
+.ach_panel_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.ach_reset_btn,
+.ach_sfx_btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ach_sfx_btn {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+.ach_reset_btn {
+    background: rgba(230, 57, 70, 0.18);
+    color: #ff6b6b;
+    border-color: rgba(230, 57, 70, 0.4);
+}
+
+.ach_reset_btn:hover,
+.ach_sfx_btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+/* ==========================================================================
+   TERCER TEMA DESBLOQUEABLE: MODO ECLIPSE (8/8 LOGROS)
+   ========================================================================== */
+html[data-theme="eclipse"] {
+    --bg-primary: #080103;
+    --bg-secondary: #130307;
+    --bg-card: #1a050a;
+    --text-primary: #ffe4e6;
+    --text-secondary: #fda4af;
+    --imperial-red: #ff0033;
+    --imperial-green: #ff0055;
+    --border-color: rgba(255, 0, 51, 0.38);
+    background-color: #080103;
+    color: #ffe4e6;
+}
+
+html[data-theme="eclipse"] body {
+    background: radial-gradient(circle at 50% 10%, #24040c 0%, #080103 70%);
+    color: #ffe4e6;
+}
+
+html[data-theme="eclipse"] .site-header,
+html[data-theme="eclipse"] .section-alt,
+html[data-theme="eclipse"] .music-player-glass,
+html[data-theme="eclipse"] .faccion-square-box,
+html[data-theme="eclipse"] .hell-quiz-box {
+    background-color: rgba(19, 3, 7, 0.9) !important;
+    border-color: rgba(255, 0, 51, 0.45) !important;
+    box-shadow: 0 0 22px rgba(255, 0, 51, 0.2);
+}
+
+html[data-theme="eclipse"] .bio-card,
+html[data-theme="eclipse"] .info-card,
+html[data-theme="eclipse"] .circle-card,
+html[data-theme="eclipse"] .story-card,
+html[data-theme="eclipse"] .meme-card,
+html[data-theme="eclipse"] .feature-item {
+    background: linear-gradient(145deg, #1b040a, #0e0205) !important;
+    border: 1px solid rgba(255, 0, 51, 0.35) !important;
+    box-shadow: 0 6px 20px rgba(255, 0, 51, 0.14);
+}
+
+html[data-theme="eclipse"] .btn-primary,
+html[data-theme="eclipse"] .theme-toggle {
+    background: linear-gradient(135deg, #b91c1c, #ff0033) !important;
+    color: #ffffff !important;
+    border-color: #ff4d6d !important;
+    box-shadow: 0 0 14px rgba(255, 0, 51, 0.5);
+}
