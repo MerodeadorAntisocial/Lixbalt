@@ -2117,4 +2117,551 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // =========================================================================
+    // E. VISOR DE MEMES DINÁMICO Y DESBLOQUEO DE TROFEO "CRÍTICO DE MOMAZOS"
+    // =========================================================================
+    const memeCards = Array.from(document.querySelectorAll('#memeGrid .meme-card'));
+    const memeLightbox = document.getElementById('memeLightbox');
+    const lightboxMemeImg = document.getElementById('lightboxMemeImg');
+    const lightboxMemeTitle = document.getElementById('lightboxMemeTitle');
+    const memeCounterText = document.getElementById('memeCounterText');
+    const closeMemeLightboxBtn = document.getElementById('closeMemeLightboxBtn');
+    const prevMemeBtn = document.getElementById('prevMemeBtn');
+    const nextMemeBtn = document.getElementById('nextMemeBtn');
+
+    let currentMemeIndex = 0;
+
+    // Abrir Lightbox y desbloquear el logro 'ach-meme'
+    function openMemeLightbox(index) {
+        if (!memeLightbox || !memeCards[index]) return;
+        currentMemeIndex = index;
+
+        const card = memeCards[currentMemeIndex];
+        const imgEl = card.querySelector('img');
+        const titleEl = card.querySelector('h4');
+
+        if (imgEl && lightboxMemeImg) {
+            lightboxMemeImg.src = imgEl.src;
+            lightboxMemeImg.alt = imgEl.alt || 'Momazo Imperial';
+        }
+        if (titleEl && lightboxMemeTitle) {
+            lightboxMemeTitle.textContent = titleEl.textContent;
+        }
+        if (memeCounterText) {
+            memeCounterText.textContent = `${currentMemeIndex + 1} / ${memeCards.length}`;
+        }
+
+        memeLightbox.classList.remove('hidden');
+        memeLightbox.setAttribute('aria-hidden', 'false');
+
+        // Desbloquear trofeo "Crítico de Momazos"
+        if (typeof window.unlockAchievement === 'function') {
+            window.unlockAchievement('ach-meme');
+        }
+    }
+
+    function closeMemeLightbox() {
+        if (!memeLightbox) return;
+        memeLightbox.classList.add('hidden');
+        memeLightbox.setAttribute('aria-hidden', 'true');
+    }
+
+    function showNextMeme() {
+        if (!memeCards.length) return;
+        const nextIdx = (currentMemeIndex + 1) % memeCards.length;
+        openMemeLightbox(nextIdx);
+    }
+
+    function showPrevMeme() {
+        if (!memeCards.length) return;
+        const prevIdx = (currentMemeIndex - 1 + memeCards.length) % memeCards.length;
+        openMemeLightbox(prevIdx);
+    }
+
+    memeCards.forEach((card, idx) => {
+        card.addEventListener('click', () => openMemeLightbox(idx));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openMemeLightbox(idx);
+            }
+        });
+    });
+
+    if (closeMemeLightboxBtn) closeMemeLightboxBtn.addEventListener('click', closeMemeLightbox);
+    if (nextMemeBtn) nextMemeBtn.addEventListener('click', showNextMeme);
+    if (prevMemeBtn) prevMemeBtn.addEventListener('click', showPrevMeme);
+
+    if (memeLightbox) {
+        memeLightbox.addEventListener('click', (e) => {
+            if (e.target === memeLightbox) closeMemeLightbox();
+        });
+    }
+
+    // Navegación con teclado (Flechas y Escape)
+    document.addEventListener('keydown', (e) => {
+        if (!memeLightbox || memeLightbox.classList.contains('hidden')) return;
+        if (e.key === 'Escape') closeMemeLightbox();
+        if (e.key === 'ArrowRight') showNextMeme();
+        if (e.key === 'ArrowLeft') showPrevMeme();
+    });
+
+
+    // =========================================================================
+// 14. EXPANSIÓN IMPERIAL: SFX, PROGRESO DE RADIO, REINICIO, CERTIFICADO Y ECLIPSE
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const htmlEl = document.documentElement;
+    const bgMusic = document.getElementById('bgMusic');
+    const musicControlsBody = document.getElementById('musicControlsBody');
+    const visCanvas = document.getElementById('audioVisualizerCanvas');
+    const achievementsPanel = document.getElementById('achievementsPanel');
+    const achievementsCount = document.getElementById('achievementsCount');
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const achievementToast = document.getElementById('achievementToast');
+    const toastTitle = document.getElementById('toastTitle');
+
+    // Inyección preventiva de elementos si no están en index.html
+    if (musicControlsBody && !document.getElementById('trackProgressContainer')) {
+        const progressHTML = `
+            <div class="track-progress-container" id="trackProgressContainer">
+                <span id="trackCurrentTime" class="track-time">0:00</span>
+                <input type="range" id="trackSeekSlider" class="track-seek-slider" 
+                    min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
+                <span id="trackDuration" class="track-time">0:00</span>
+            </div>
+        `;
+        if (visCanvas) {
+            visCanvas.insertAdjacentHTML('afterend', progressHTML);
+        } else {
+            musicControlsBody.insertAdjacentHTML('beforeend', progressHTML);
+        }
+    }
+
+    if (achievementsPanel && !document.getElementById('achPanelFooter')) {
+        const footerHTML = `
+            <div class="ach_panel_footer" id="achPanelFooter">
+                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button">🔊 SFX: ON</button>
+                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button">🗑️ Reiniciar Logros</button>
+            </div>
+        `;
+        achievementsPanel.insertAdjacentHTML('beforeend', footerHTML);
+    }
+
+    const quizResultActions = document.querySelector('#quizResultView .quiz-result-actions');
+    if (quizResultActions && !document.getElementById('downloadCertBtn')) {
+        const retryBtn = document.getElementById('retryQuizBtn');
+        const certBtn = document.createElement('button');
+        certBtn.id = 'downloadCertBtn';
+        certBtn.className = 'btn btn-secondary';
+        certBtn.textContent = '📜 Descargar Certificado';
+        if (retryBtn) {
+            quizResultActions.insertBefore(certBtn, retryBtn);
+        } else {
+            quizResultActions.appendChild(certBtn);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // A. EFECTOS DE SONIDO DE INTERFAZ (WEB AUDIO API)
+    // -------------------------------------------------------------------------
+    let sfxEnabled = localStorage.getItem('imperio-papu-sfx') !== 'off';
+    let sfxCtx = null;
+
+    function getSfxContext() {
+        if (!sfxEnabled) return null;
+        if (!sfxCtx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) sfxCtx = new AudioCtx();
+        }
+        if (sfxCtx && sfxCtx.state === 'suspended') {
+            sfxCtx.resume().catch(() => {});
+        }
+        return sfxCtx;
+    }
+
+    const ImperialSFX = {
+        hover() {
+            const ctx = getSfxContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(240, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(340, ctx.currentTime + 0.035);
+            gain.gain.setValueAtTime(0.025, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.035);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.04);
+        },
+        click() {
+            const ctx = getSfxContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(520, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.065);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.065);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.07);
+        },
+        modal() {
+            const ctx = getSfxContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(180, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(460, ctx.currentTime + 0.16);
+            gain.gain.setValueAtTime(0.07, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.17);
+        },
+        unlock() {
+            const ctx = getSfxContext();
+            if (!ctx) return;
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // Do5, Mi5, Sol5, Do6
+            notes.forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const start = ctx.currentTime + idx * 0.08;
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, start);
+                gain.gain.setValueAtTime(0.11, start);
+                gain.gain.exponentialRampToValueAtTime(0.001, start + 0.24);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(start);
+                osc.stop(start + 0.25);
+            });
+        },
+        reset() {
+            const ctx = getSfxContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(380, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(95, ctx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.26);
+        }
+    };
+
+    // Eventos globales de sonido para tarjetas y botones
+    document.querySelectorAll('.bio-card, .info-card, .circle-card, .meme-card, .video-link-card').forEach(el => {
+        el.addEventListener('mouseenter', () => ImperialSFX.hover());
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('button, .btn, .nav-link, .video-link-card')) {
+            ImperialSFX.click();
+        } else if (e.target.closest('.info-card, .circle-card, .meme-card')) {
+            ImperialSFX.modal();
+        }
+    });
+
+    const sfxToggleBtn = document.getElementById('sfxToggleBtn');
+    if (sfxToggleBtn) {
+        const updateSfxBtnText = () => {
+            sfxToggleBtn.textContent = sfxEnabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+        };
+        updateSfxBtnText();
+        sfxToggleBtn.addEventListener('click', () => {
+            sfxEnabled = !sfxEnabled;
+            localStorage.setItem('imperio-papu-sfx', sfxEnabled ? 'on' : 'off');
+            updateSfxBtnText();
+            if (sfxEnabled) ImperialSFX.click();
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // B. BARRA DE PROGRESO INTERACTIVA EN RADIO LIXBALT
+    // -------------------------------------------------------------------------
+    const trackSeekSlider = document.getElementById('trackSeekSlider');
+    const trackCurrentTime = document.getElementById('trackCurrentTime');
+    const trackDuration = document.getElementById('trackDuration');
+    let isSeekingTrack = false;
+
+    function formatAudioTime(seconds) {
+        if (!isFinite(seconds) || seconds < 0) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${String(secs).padStart(2, '0')}`;
+    }
+
+    if (bgMusic && trackSeekSlider) {
+        bgMusic.addEventListener('loadedmetadata', () => {
+            trackDuration.textContent = formatAudioTime(bgMusic.duration);
+        });
+
+        bgMusic.addEventListener('timeupdate', () => {
+            if (isSeekingTrack) return;
+            trackCurrentTime.textContent = formatAudioTime(bgMusic.currentTime);
+            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
+                trackSeekSlider.value = ((bgMusic.currentTime / bgMusic.duration) * 100).toFixed(2);
+                trackDuration.textContent = formatAudioTime(bgMusic.duration);
+            }
+        });
+
+        trackSeekSlider.addEventListener('input', (e) => {
+            isSeekingTrack = true;
+            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
+                const previewTime = (parseFloat(e.target.value) / 100) * bgMusic.duration;
+                trackCurrentTime.textContent = formatAudioTime(previewTime);
+            }
+        });
+
+        trackSeekSlider.addEventListener('change', (e) => {
+            if (isFinite(bgMusic.duration) && bgMusic.duration > 0) {
+                bgMusic.currentTime = (parseFloat(e.target.value) / 100) * bgMusic.duration;
+            }
+            isSeekingTrack = false;
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // C. TERCER TEMA VISUAL DESBLOQUEABLE ("MODO ECLIPSE") Y REINICIO DE LOGROS
+    // -------------------------------------------------------------------------
+    const allAchievementIds = [
+        'ach-explorer', 'ach-hacker', 'ach-audio', 'ach-meme',
+        'ach-distant', 'ach-judge', 'ach-inquisidor', 'ach-cinema'
+    ];
+
+    function areAllAchievementsUnlocked() {
+        const stored = JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {};
+        return allAchievementIds.every(id => stored[id] === true);
+    }
+
+    function applyImperialTheme(theme) {
+        const validTheme = (theme === 'eclipse' && !areAllAchievementsUnlocked()) ? 'dark' : theme;
+        htmlEl.setAttribute('data-theme', validTheme);
+        localStorage.setItem('imperio-papu-theme', validTheme);
+
+        if (!themeIcon || !themeText) return;
+        const eclipseUnlocked = areAllAchievementsUnlocked();
+
+        if (validTheme === 'dark') {
+            themeIcon.textContent = '☀️';
+            themeText.textContent = 'Modo Claro';
+        } else if (validTheme === 'light') {
+            if (eclipseUnlocked) {
+                themeIcon.textContent = '🌑';
+                themeText.textContent = 'Modo Eclipse';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Modo Oscuro';
+            }
+        } else if (validTheme === 'eclipse') {
+            themeIcon.textContent = '🌙';
+            themeText.textContent = 'Modo Oscuro';
+        }
+    }
+
+    // Reemplaza el comportamiento del botón de tema para incluir Modo Eclipse si 8/8 están activos
+    if (themeToggleBtn) {
+        applyImperialTheme(localStorage.getItem('imperio-papu-theme') || 'dark');
+
+        themeToggleBtn.addEventListener('click', (e) => {
+            e.stopImmediatePropagation();
+            ImperialSFX.click();
+            const current = htmlEl.getAttribute('data-theme') || 'dark';
+            const eclipseUnlocked = areAllAchievementsUnlocked();
+
+            let nextTheme = 'dark';
+            if (current === 'dark') {
+                nextTheme = 'light';
+            } else if (current === 'light') {
+                nextTheme = eclipseUnlocked ? 'eclipse' : 'dark';
+            } else {
+                nextTheme = 'dark';
+            }
+            applyImperialTheme(nextTheme);
+        }, true);
+    }
+
+    // Interceptar window.unlockAchievement para añadir sonido y avisar del Modo Eclipse al llegar a 8/8
+    const baseUnlockAchievement = window.unlockAchievement;
+    if (typeof baseUnlockAchievement === 'function') {
+        window.unlockAchievement = function(achId) {
+            const wasUnlocked = (JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {})[achId];
+            baseUnlockAchievement(achId);
+            const isNowUnlocked = (JSON.parse(localStorage.getItem('imperio-papu-achievements')) || {})[achId];
+
+            if (!wasUnlocked && isNowUnlocked) {
+                ImperialSFX.unlock();
+                if (areAllAchievementsUnlocked()) {
+                    applyImperialTheme(htmlEl.getAttribute('data-theme') || 'dark');
+                    setTimeout(() => {
+                        if (achievementToast && toastTitle) {
+                            toastTitle.textContent = '🌑 ¡MODO ECLIPSE DESBLOQUEADO EN EL BOTÓN DE TEMA!';
+                            achievementToast.classList.remove('hidden');
+                            achievementToast.classList.add('show');
+                            ImperialSFX.unlock();
+                            setTimeout(() => achievementToast.classList.remove('show'), 4200);
+                        }
+                    }, 3800);
+                }
+            }
+        };
+    }
+
+    // Botón de Reinicio de Condecoraciones
+    const resetAchievementsBtn = document.getElementById('resetAchievementsBtn');
+    if (resetAchievementsBtn) {
+        resetAchievementsBtn.addEventListener('click', () => {
+            localStorage.removeItem('imperio-papu-achievements');
+            ImperialSFX.reset();
+
+            allAchievementIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('unlocked');
+                    const statusSpan = el.querySelector('.ach_status');
+                    if (statusSpan) statusSpan.textContent = '🔒';
+                }
+            });
+
+            if (achievementsCount) {
+                achievementsCount.textContent = `0/${allAchievementIds.length}`;
+            }
+
+            if (htmlEl.getAttribute('data-theme') === 'eclipse') {
+                applyImperialTheme('dark');
+            } else {
+                applyImperialTheme(htmlEl.getAttribute('data-theme') || 'dark');
+            }
+
+            // Recargar brevemente el estado en memoria para permitir volver a ganarlos sin refrescar
+            setTimeout(() => window.location.reload(), 350);
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // D. CERTIFICADO DESCARGABLE DEL TEST DEL INFIERNO (CANVAS PNG)
+    // -------------------------------------------------------------------------
+    const downloadCertBtn = document.getElementById('downloadCertBtn');
+
+    function wrapCanvasParagraph(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        let currentY = y;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+                ctx.fillText(line.trim(), x, currentY);
+                line = words[i] + ' ';
+                currentY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line.trim(), x, currentY);
+    }
+
+    if (downloadCertBtn) {
+        downloadCertBtn.addEventListener('click', () => {
+            const romanNum = document.getElementById('quizResultNum')?.textContent.trim() || 'VII';
+            const circleTitle = document.getElementById('quizResultTitle')?.textContent.trim() || 'Círculo VII: Violencia';
+            const guardianText = document.getElementById('quizResultGuardian')?.textContent.trim() || 'Representante asignado: Martiniano';
+            const descText = document.getElementById('quizResultDesc')?.textContent.trim() || '';
+
+            const certCanvas = document.createElement('canvas');
+            certCanvas.width = 900;
+            certCanvas.height = 560;
+            const cctx = certCanvas.getContext('2d');
+
+            // Fondo abismal imperial
+            const bgGrad = cctx.createRadialGradient(450, 280, 50, 450, 280, 520);
+            bgGrad.addColorStop(0, '#1f070d');
+            bgGrad.addColorStop(1, '#090b10');
+            cctx.fillStyle = bgGrad;
+            cctx.fillRect(0, 0, 900, 560);
+
+            // Marcos ornamentales dobles
+            cctx.strokeStyle = '#e63946';
+            cctx.lineWidth = 4;
+            cctx.strokeRect(24, 24, 852, 512);
+
+            cctx.strokeStyle = '#eab308';
+            cctx.lineWidth = 1.5;
+            cctx.strokeRect(36, 36, 828, 488);
+
+            // Encabezado
+            cctx.fillStyle = '#eab308';
+            cctx.font = 'bold 16px sans-serif';
+            cctx.textAlign = 'center';
+            cctx.fillText('TRIBUNAL SUPREMO DEL IMPERIO PAPU // ARCHIVO OFICIAL 3.2', 450, 82);
+
+            cctx.fillStyle = '#ffffff';
+            cctx.font = 'bold 28px sans-serif';
+            cctx.fillText('SENTENCIA DEL JUICIO IMPERIAL', 450, 122);
+
+            // Número romano central en medallón
+            cctx.beginPath();
+            cctx.arc(450, 205, 52, 0, Math.PI * 2);
+            cctx.fillStyle = 'rgba(230, 57, 70, 0.2)';
+            cctx.fill();
+            cctx.lineWidth = 3;
+            cctx.strokeStyle = '#e63946';
+            cctx.stroke();
+
+            cctx.fillStyle = '#ff4d6d';
+            cctx.font = 'bold 44px serif';
+            cctx.textBaseline = 'middle';
+            cctx.fillText(romanNum, 450, 207);
+
+            // Título del Círculo y Guardián
+            cctx.textBaseline = 'alphabetic';
+            cctx.fillStyle = '#ffffff';
+            cctx.font = 'bold 34px sans-serif';
+            cctx.fillText(circleTitle.toUpperCase(), 450, 305);
+
+            cctx.fillStyle = '#22c55e';
+            cctx.font = 'bold 21px sans-serif';
+            cctx.fillText(guardianText, 450, 342);
+
+            // Descripción del dictamen
+            cctx.fillStyle = '#cbd5e1';
+            cctx.font = 'italic 18px sans-serif';
+            wrapCanvasParagraph(cctx, `"${descText}"`, 450, 392, 700, 28);
+
+            // Pie de certificado con fecha y sello
+            const dateStr = new Date().toLocaleDateString('es-AR', {
+                year: 'numeric', month: '2-digit', day: '2-digit'
+            });
+            cctx.fillStyle = '#94a3b8';
+            cctx.font = 'bold 14px monospace';
+            cctx.textAlign = 'left';
+            cctx.fillText(`FECHA DE SENTENCIA: ${dateStr}`, 60, 495);
+
+            cctx.fillStyle = '#eab308';
+            cctx.textAlign = 'right';
+            cctx.fillText('SELLO DEL SAGRADO LORE IMPERIAL ★', 840, 495);
+
+            // Descarga directa en PNG
+            const link = document.createElement('a');
+            link.download = `certificado-imperio-papu-circulo-${romanNum}.png`;
+            link.href = certCanvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+});
 });
