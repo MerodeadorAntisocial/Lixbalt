@@ -1213,7 +1213,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <div class="cinema-video-wrapper" id="cinemaVideoWrapper"></div>
+                    <div class="cinema-search-bar">
+                        <span class="cinema-search-icon">🔍</span>
+                        <input type="search" id="cinemaSearchInput" class="cinema-search-input"
+                            placeholder="Buscar video en el archivo..." aria-label="Buscar video en Modo Cine">
+                        <span id="cinemaSearchCount" class="cinema-search-count">0 / 0</span>
+                    </div>
                     <div class="cinema-playlist-bar" id="cinemaPlaylistBar"></div>
+                    <p id="cinemaNoResults" class="cinema-no-results hidden">No se encontraron videos con ese título.</p>
                 </div>
             </div>
         `;
@@ -1228,9 +1235,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeCinemaBtn = document.getElementById('closeCinemaBtn');
     const videoLinkCards = Array.from(document.querySelectorAll('.video-links-grid .video-link-card'));
 
+    if (cinemaPlaylistBar && !document.getElementById('cinemaSearchInput')) {
+        cinemaPlaylistBar.insertAdjacentHTML('beforebegin', `
+            <div class="cinema-search-bar">
+                <span class="cinema-search-icon">🔍</span>
+                <input type="search" id="cinemaSearchInput" class="cinema-search-input"
+                    placeholder="Buscar video en el archivo..." aria-label="Buscar video en Modo Cine">
+                <span id="cinemaSearchCount" class="cinema-search-count">0 / 0</span>
+            </div>
+        `);
+        cinemaPlaylistBar.insertAdjacentHTML('afterend', `
+            <p id="cinemaNoResults" class="cinema-no-results hidden">No se encontraron videos con ese título.</p>
+        `);
+    }
+
+    const cinemaSearchInput = document.getElementById('cinemaSearchInput');
+    const cinemaSearchCount = document.getElementById('cinemaSearchCount');
+    const cinemaNoResults = document.getElementById('cinemaNoResults');
+
     function extractYouTubeId(url) {
         try {
             const parsed = new URL(url);
+            if (parsed.hostname.includes('youtu.be')) {
+                return parsed.pathname.slice(1).split('/')[0];
+            }
             if (parsed.pathname.includes('/shorts/')) {
                 return parsed.pathname.split('/shorts/')[1].split('/')[0];
             }
@@ -1244,36 +1272,119 @@ document.addEventListener('DOMContentLoaded', () => {
         const href = card.getAttribute('href') || '';
         const titleSpans = card.querySelectorAll('span');
         const title = titleSpans.length > 1 ? titleSpans[1].textContent.trim() : card.textContent.trim();
+        const videoId = extractYouTubeId(href);
+        const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
+        const miniThumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
+
+        if (thumbUrl && !card.querySelector('.video-thumb-box')) {
+            card.innerHTML = '';
+
+            const thumbBox = document.createElement('div');
+            thumbBox.className = 'video-thumb-box';
+
+            const img = document.createElement('img');
+            img.className = 'video-thumb-img';
+            img.src = thumbUrl;
+            img.alt = title;
+            img.loading = 'lazy';
+            img.onerror = function () {
+                this.onerror = null;
+                this.src = 'https://placehold.co/480x270/111822/22c55e?text=Video+Imperial';
+            };
+
+            const overlay = document.createElement('div');
+            overlay.className = 'video-thumb-overlay';
+
+            const playIcon = document.createElement('span');
+            playIcon.className = 'play-icon';
+            playIcon.textContent = '▶';
+
+            overlay.appendChild(playIcon);
+            thumbBox.appendChild(img);
+            thumbBox.appendChild(overlay);
+
+            const info = document.createElement('div');
+            info.className = 'video-card-info';
+
+            const titleEl = document.createElement('span');
+            titleEl.className = 'video-card-title';
+            titleEl.textContent = title;
+
+            info.appendChild(titleEl);
+            card.appendChild(thumbBox);
+            card.appendChild(info);
+        }
+
         return {
             index,
             title,
             href,
-            videoId: extractYouTubeId(href)
+            videoId,
+            thumbUrl,
+            miniThumbUrl
         };
     });
+
+    function filterCinemaPlaylist() {
+        if (!cinemaPlaylistBar) return;
+        const query = normalizeStr(cinemaSearchInput ? cinemaSearchInput.value.trim() : '');
+        const chips = Array.from(cinemaPlaylistBar.querySelectorAll('.cinema-track-chip'));
+        let visibleCount = 0;
+
+        chips.forEach(chip => {
+            const matches = !query || normalizeStr(chip.dataset.title).includes(query);
+            chip.classList.toggle('hidden', !matches);
+            if (matches) visibleCount++;
+        });
+
+        if (cinemaSearchCount) {
+            cinemaSearchCount.textContent = `${visibleCount} / ${videoItems.length}`;
+        }
+        if (cinemaNoResults) {
+            cinemaNoResults.classList.toggle('hidden', visibleCount > 0 || videoItems.length === 0);
+        }
+    }
 
     if (cinemaPlaylistBar) {
         cinemaPlaylistBar.innerHTML = '';
         videoItems.forEach(item => {
             const chip = document.createElement('button');
+            chip.type = 'button';
             chip.className = 'cinema-track-chip';
-            chip.textContent = `▶ ${item.title}`;
             chip.dataset.idx = item.index;
+            chip.dataset.title = item.title;
+
+            if (item.miniThumbUrl) {
+                const thumb = document.createElement('img');
+                thumb.className = 'cinema-chip-thumb';
+                thumb.src = item.miniThumbUrl;
+                thumb.alt = '';
+                thumb.loading = 'lazy';
+                chip.appendChild(thumb);
+            }
+
+            const label = document.createElement('span');
+            label.textContent = item.title;
+            chip.appendChild(label);
+
             chip.addEventListener('click', () => openCinemaVideo(item.index));
             cinemaPlaylistBar.appendChild(chip);
         });
+        filterCinemaPlaylist();
+    }
+
+    if (cinemaSearchInput) {
+        cinemaSearchInput.addEventListener('input', filterCinemaPlaylist);
     }
 
     function openCinemaVideo(idx) {
         const item = videoItems[idx];
         if (!item || !cinemaModalBackdrop) return;
 
-        // Desbloquear trofeo "Cinéfilo Imperial"
         if (typeof window.unlockAchievement === 'function') {
             window.unlockAchievement('ach-cinema');
         }
 
-        // Pausar música de Radio Lixbalt si está sonando
         const playPauseBtn = document.getElementById('playPauseBtn');
         if (bgMusic && !bgMusic.paused && playPauseBtn) {
             playPauseBtn.click();
@@ -1284,11 +1395,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (item.videoId) {
             cinemaVideoWrapper.innerHTML = `
-                <iframe 
-                    src="https://www.youtube.com/embed/${item.videoId}?autoplay=1&rel=0" 
+                <iframe
+                    src="https://www.youtube.com/embed/${item.videoId}?autoplay=1&rel=0"
                     title="${item.title}"
                     referrerpolicy="strict-origin-when-cross-origin"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen>
                 </iframe>
             `;
@@ -1309,6 +1420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         cinemaModalBackdrop.setAttribute('aria-hidden', 'true');
         if (cinemaVideoWrapper) {
             cinemaVideoWrapper.innerHTML = '';
+        }
+        if (cinemaSearchInput) {
+            cinemaSearchInput.value = '';
+            filterCinemaPlaylist();
         }
     }
 
