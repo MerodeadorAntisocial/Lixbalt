@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -71,7 +71,7 @@
                 <div class="cards-grid">
                     <a href="integrantes.html" class="info-card" style="text-decoration: none; color: inherit;">
                         <h3>📖 Biografías y Características</h3>
-                        <p>Expedientes de los 11 integrantes, habilidades, debilidades y rasgos ocultos.</p>
+                        <p>Expedientes de los 13 integrantes, habilidades, debilidades y rasgos ocultos.</p>
                     </a>
                     <a href="lore.html" class="info-card" style="text-decoration: none; color: inherit;">
                         <h3>⚔️ Facciones e Historias</h3>
@@ -219,6 +219,16 @@
 
             <canvas id="audioVisualizerCanvas" class="audio-visualizer-canvas" width="240" height="46"></canvas>
 
+            <div class="track-progress-container">
+                <span id="trackCurrentTime" class="track-time">0:00</span>
+                <input type="range" id="trackSeekSlider" class="track-seek-slider"
+                    min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
+                <span id="trackDuration" class="track-time">0:00</span>
+            </div>
+
+            
+
+        
             <div class="volume-controls">
                 <button class="vol-step-btn" id="volDownBtn" title="Bajar volumen (-10%)" aria-label="Bajar volumen">
                     🔉 −
@@ -358,6 +368,10 @@
                     </div>
                     <span class="ach_status">🔒</span>
                 </div>
+            </div>
+            <div class="ach_panel_footer">
+                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button" title="Activar o silenciar efectos de sonido">🔊 SFX: ON</button>
+                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button" title="Reiniciar todas las condecoraciones">🔄 Reiniciar</button>
             </div>
         </div>
     </div>

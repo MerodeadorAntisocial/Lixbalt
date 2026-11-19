@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -87,8 +86,9 @@
                             <p id="quizResultGuardian" class="quiz-result-guardian">Representante asignado: Martiniano</p>
                             <p id="quizResultDesc" class="quiz-result-desc"></p>
                             <div class="quiz-result-actions">
-                                <button id="highlightCircleBtn" class="btn btn-secondary">Ver en los Círculos</button>
-                                <button id="retryQuizBtn" class="btn btn-primary">Repetir Juicio</button>
+                                <button id="downloadCertBtn" class="btn btn-cert" type="button">📜 Descargar Certificado</button>
+                                <button id="highlightCircleBtn" class="btn btn-secondary" type="button">Ver en los Círculos</button>
+                                <button id="retryQuizBtn" class="btn btn-primary" type="button">Repetir Juicio</button>
                             </div>
                         </div>
                     </div>
@@ -201,6 +201,15 @@
             </div>
 
             <canvas id="audioVisualizerCanvas" class="audio-visualizer-canvas" width="240" height="46"></canvas>
+
+            <div class="track-progress-container">
+                <span id="trackCurrentTime" class="track-time">0:00</span>
+                <input type="range" id="trackSeekSlider" class="track-seek-slider"
+                    min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
+                <span id="trackDuration" class="track-time">0:00</span>
+            </div>
+
+            
 
             <div class="volume-controls">
                 <button class="vol-step-btn" id="volDownBtn" title="Bajar volumen (-10%)" aria-label="Bajar volumen">
@@ -341,6 +350,10 @@
                     </div>
                     <span class="ach_status">🔒</span>
                 </div>
+            </div>
+            <div class="ach_panel_footer">
+                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button" title="Activar o silenciar efectos de sonido">🔊 SFX: ON</button>
+                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button" title="Reiniciar todas las condecoraciones">🔄 Reiniciar</button>
             </div>
         </div>
     </div>

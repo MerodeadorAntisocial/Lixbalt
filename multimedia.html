@@ -216,7 +216,7 @@
                     <!-- Meme 14 -->
                     <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="memes\meme14.jpg" alt="Momazo Imperial #14" loading="lazy"
+                            <img src="memes\When tiene sida.jpg" alt="Momazo Imperial #14" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+14+(img/memes/meme14.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -228,7 +228,7 @@
                     <!-- Meme 15 -->
                     <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme15.jpg" alt="Momazo Imperial #15" loading="lazy"
+                            <img src="memes\Walter.png" alt="Momazo Imperial #15" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+15+(img/memes/meme15.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -240,7 +240,7 @@
                     <!-- Meme 16 -->
                     <article class="meme-card" data-category="Lore" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme16.jpg" alt="Momazo Imperial #16" loading="lazy"
+                            <img src="memes\waos.jpg" alt="Momazo Imperial #16" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+16+(img/memes/meme16.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -252,7 +252,7 @@
                     <!-- Meme 17 -->
                     <article class="meme-card" data-category="Yunque" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme17.jpg" alt="Momazo Imperial #17" loading="lazy"
+                            <img src="memes\imperio gatto.png" alt="Momazo Imperial #17" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/22c55e?text=Meme+17+(img/memes/meme17.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -264,7 +264,7 @@
                     <!-- Meme 18 -->
                     <article class="meme-card" data-category="Triple T" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme18.jpg" alt="Momazo Imperial #18" loading="lazy"
+                            <img src="memes\Imagen de WhatsApp 2024-12-06 a las 13.15.45_6f76aa32.png" alt="Momazo Imperial #18" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/d90429?text=Meme+18+(img/memes/meme18.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -276,7 +276,7 @@
                     <!-- Meme 19 -->
                     <article class="meme-card" data-category="Empresarios" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme19.jpg" alt="Momazo Imperial #19" loading="lazy"
+                            <img src="memes\Gravity Falls.png" alt="Momazo Imperial #19" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/3b82f6?text=Meme+19+(img/memes/meme19.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -288,7 +288,7 @@
                     <!-- Meme 20 -->
                     <article class="meme-card" data-category="Lore" tabindex="0" role="button">
                         <div class="meme-img-box">
-                            <img src="img/memes/meme20.jpg" alt="Momazo Imperial #20" loading="lazy"
+                            <img src="memes\El signo de esperanza.png" alt="Momazo Imperial #20" loading="lazy"
                                 onerror="this.src='https://placehold.co/600x450/151c24/eab308?text=Meme+20+(img/memes/meme20.jpg)'">
                         </div>
                         <div class="meme-info">
@@ -458,6 +458,15 @@
 
             <canvas id="audioVisualizerCanvas" class="audio-visualizer-canvas" width="240" height="46"></canvas>
 
+            <div class="track-progress-container">
+                <span id="trackCurrentTime" class="track-time">0:00</span>
+                <input type="range" id="trackSeekSlider" class="track-seek-slider"
+                    min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
+                <span id="trackDuration" class="track-time">0:00</span>
+            </div>
+
+            
+
             <div class="volume-controls">
                 <button class="vol-step-btn" id="volDownBtn" title="Bajar volumen (-10%)" aria-label="Bajar volumen">
                     🔉 −
@@ -597,6 +606,10 @@
                     </div>
                     <span class="ach_status">🔒</span>
                 </div>
+            </div>
+            <div class="ach_panel_footer">
+                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button" title="Activar o silenciar efectos de sonido">🔊 SFX: ON</button>
+                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button" title="Reiniciar todas las condecoraciones">🔄 Reiniciar</button>
             </div>
         </div>
     </div>
