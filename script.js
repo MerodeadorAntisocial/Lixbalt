@@ -921,8 +921,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p id="quizResultGuardian" class="quiz-result-guardian"></p>
                         <p id="quizResultDesc" class="quiz-result-desc"></p>
                         <div class="quiz-result-actions">
-                            <button id="highlightCircleBtn" class="btn btn-secondary">Ver en los Círculos</button>
-                            <button id="retryQuizBtn" class="btn btn-primary">Repetir Juicio</button>
+                            <button id="downloadCertBtn" class="btn btn-cert" type="button">📜 Descargar Certificado</button>
+                            <button id="highlightCircleBtn" class="btn btn-secondary" type="button">Ver en los Círculos</button>
+                            <button id="retryQuizBtn" class="btn btn-primary" type="button">Repetir Juicio</button>
                         </div>
                     </div>
                 </div>
@@ -1594,6 +1595,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const achievementsPanelEl = document.getElementById('achievementsPanel');
+    if (achievementsPanelEl && !document.getElementById('sfxToggleBtn')) {
+        achievementsPanelEl.insertAdjacentHTML('beforeend', `
+            <div class="ach_panel_footer">
+                <button id="sfxToggleBtn" class="ach_sfx_btn" type="button" title="Activar o silenciar efectos de sonido">🔊 SFX: ON</button>
+                <button id="resetAchievementsBtn" class="ach_reset_btn" type="button" title="Reiniciar todas las condecoraciones">🔄 Reiniciar</button>
+            </div>
+        `);
+    }
+
     const sfxToggleBtn = document.getElementById('sfxToggleBtn');
     if (sfxToggleBtn) {
         const updateSfxUI = () => {
@@ -1614,10 +1625,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // B. BARRA DE PROGRESO INTERACTIVA EN RADIO LIXBALT
     // -------------------------------------------------------------------------
-    const trackSeekSlider = document.getElementById('trackSeekSlider');
-    const trackCurrentTime = document.getElementById('trackCurrentTime');
-    const trackDuration = document.getElementById('trackDuration');
+    let trackSeekSlider = document.getElementById('trackSeekSlider');
+    let trackCurrentTime = document.getElementById('trackCurrentTime');
+    let trackDuration = document.getElementById('trackDuration');
+    const musicControlsBodyEl = document.getElementById('musicControlsBody');
+
+    if (!trackSeekSlider && musicControlsBodyEl) {
+        const progressHTML = `
+            <div class="track-progress-container">
+                <span id="trackCurrentTime" class="track-time">0:00</span>
+                <input type="range" id="trackSeekSlider" class="track-seek-slider" min="0" max="100" step="0.1" value="0" aria-label="Progreso de la canción">
+                <span id="trackDuration" class="track-time">0:00</span>
+            </div>
+        `;
+        const volumeControls = musicControlsBodyEl.querySelector('.volume-controls');
+        if (volumeControls) {
+            volumeControls.insertAdjacentHTML('beforebegin', progressHTML);
+        } else {
+            musicControlsBodyEl.insertAdjacentHTML('beforeend', progressHTML);
+        }
+        trackSeekSlider = document.getElementById('trackSeekSlider');
+        trackCurrentTime = document.getElementById('trackCurrentTime');
+        trackDuration = document.getElementById('trackDuration');
+    }
+
     let isSeekingTrack = false;
+    let pendingSeekPct = null;
 
     function formatAudioTime(seconds) {
         if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -1626,40 +1659,100 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${mins}:${String(secs).padStart(2, '0')}`;
     }
 
+    function setSliderVisualProgress(percent) {
+        if (!trackSeekSlider) return;
+        const clamped = Math.max(0, Math.min(100, percent));
+        trackSeekSlider.style.setProperty('--seek-percent', `${clamped}%`);
+    }
+
     function syncProgressUI() {
         if (!bgMusic || !trackSeekSlider || isSeekingTrack) return;
         const cur = bgMusic.currentTime || 0;
         const dur = bgMusic.duration || 0;
-        trackCurrentTime.textContent = formatAudioTime(cur);
+        if (trackCurrentTime) trackCurrentTime.textContent = formatAudioTime(cur);
         if (isFinite(dur) && dur > 0) {
-            trackDuration.textContent = formatAudioTime(dur);
-            trackSeekSlider.value = ((cur / dur) * 100).toFixed(2);
+            const pct = (cur / dur) * 100;
+            if (trackDuration) trackDuration.textContent = formatAudioTime(dur);
+            trackSeekSlider.value = pct.toFixed(2);
+            setSliderVisualProgress(pct);
         } else {
-            trackDuration.textContent = '0:00';
+            if (trackDuration) trackDuration.textContent = '0:00';
             trackSeekSlider.value = 0;
+            setSliderVisualProgress(0);
         }
     }
 
     if (bgMusic && trackSeekSlider) {
+        const seekToSliderValue = (value) => {
+            const pct = parseFloat(value) || 0;
+            setSliderVisualProgress(pct);
+            const dur = bgMusic.duration;
+            if (isFinite(dur) && dur > 0) {
+                const newTime = (pct / 100) * dur;
+                bgMusic.currentTime = newTime;
+                if (trackCurrentTime) trackCurrentTime.textContent = formatAudioTime(newTime);
+                sessionStorage.setItem('imperio-papu-time', String(newTime));
+            }
+        };
+
         bgMusic.addEventListener('loadedmetadata', syncProgressUI);
         bgMusic.addEventListener('durationchange', syncProgressUI);
         bgMusic.addEventListener('timeupdate', syncProgressUI);
+        bgMusic.addEventListener('seeked', syncProgressUI);
+        bgMusic.addEventListener('emptied', () => {
+            isSeekingTrack = false;
+            pendingSeekPct = null;
+            syncProgressUI();
+        });
+
+        trackSeekSlider.addEventListener('pointerdown', () => {
+            isSeekingTrack = true;
+            pendingSeekPct = null;
+        });
 
         trackSeekSlider.addEventListener('input', (e) => {
-            isSeekingTrack = true;
+            const pct = parseFloat(e.target.value) || 0;
+            setSliderVisualProgress(pct);
             const dur = bgMusic.duration;
             if (isFinite(dur) && dur > 0) {
-                trackCurrentTime.textContent = formatAudioTime((parseFloat(e.target.value) / 100) * dur);
+                const targetTime = (pct / 100) * dur;
+                if (trackCurrentTime) trackCurrentTime.textContent = formatAudioTime(targetTime);
+                if (isSeekingTrack) {
+                    pendingSeekPct = pct;
+                } else {
+                    bgMusic.currentTime = targetTime;
+                    sessionStorage.setItem('imperio-papu-time', String(targetTime));
+                }
             }
         });
 
+        const finishSeek = () => {
+            if (!isSeekingTrack) return;
+            if (pendingSeekPct !== null) {
+                seekToSliderValue(pendingSeekPct);
+                pendingSeekPct = null;
+            }
+            isSeekingTrack = false;
+        };
+
         trackSeekSlider.addEventListener('change', (e) => {
-            const dur = bgMusic.duration;
-            if (isFinite(dur) && dur > 0) {
-                bgMusic.currentTime = (parseFloat(e.target.value) / 100) * dur;
+            if (pendingSeekPct !== null) {
+                seekToSliderValue(e.target.value);
+                pendingSeekPct = null;
             }
             isSeekingTrack = false;
         });
+
+        window.addEventListener('pointerup', finishSeek);
+        window.addEventListener('pointercancel', () => {
+            pendingSeekPct = null;
+            isSeekingTrack = false;
+            syncProgressUI();
+        });
+
+        if (bgMusic.readyState >= 1) {
+            syncProgressUI();
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -1675,7 +1768,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const restorePlaybackPosition = () => {
             if (savedTrack === currentTrack && savedTime > 0 && isFinite(bgMusic.duration)) {
                 bgMusic.currentTime = Math.min(savedTime, bgMusic.duration - 0.5);
+                syncProgressUI();
             }
+            
             if (wasPlaying && bgMusic.paused) {
                 bgMusic.play().then(() => {
                     const playPauseBtn = document.getElementById('playPauseBtn');
@@ -1807,7 +1902,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ImperialSFX.reset();
             
             localStorage.removeItem('imperio-papu-achievements');
-            localStorage.removeItem('imperio-papu-achievements');
             localStorage.removeItem('imperio-papu-factions');
             localStorage.removeItem('imperio-papu-circles');
 
@@ -1837,7 +1931,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // D. CERTIFICADO DESCARGABLE DEL TEST DEL INFIERNO (CANVAS PNG)
     // -------------------------------------------------------------------------
-    const downloadCertBtn = document.getElementById('downloadCertBtn');
+    let downloadCertBtn = document.getElementById('downloadCertBtn');
+    const quizResultActionsEl = document.querySelector('#quizResultView .quiz-result-actions');
+    if (!downloadCertBtn && quizResultActionsEl) {
+        quizResultActionsEl.insertAdjacentHTML('afterbegin', '<button id="downloadCertBtn" class="btn btn-cert" type="button">📜 Descargar Certificado</button>');
+        downloadCertBtn = document.getElementById('downloadCertBtn');
+    }
 
     function wrapCanvasParagraph(ctx, text, x, y, maxWidth, lineHeight) {
         const words = text.split(' ');
@@ -1930,10 +2029,13 @@ document.addEventListener('DOMContentLoaded', () => {
             cctx.textAlign = 'right';
             cctx.fillText('SELLO DEL SAGRADO LORE IMPERIAL ★', 840, 495);
 
+            ImperialSFX.unlock();
             const link = document.createElement('a');
             link.download = `certificado-imperio-papu-circulo-${romanNum}.png`;
             link.href = certCanvas.toDataURL('image/png');
+            document.body.appendChild(link);
             link.click();
+            link.remove();
         });
     }
 });
